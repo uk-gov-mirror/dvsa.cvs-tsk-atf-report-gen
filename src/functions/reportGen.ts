@@ -26,7 +26,7 @@ const reportGen: Handler = async (event: any, context?: Context, callback?: Call
         const retroUploadPromise = reportService.generateATFReport(visit)
         .then((generationServiceResponse: { fileName: string, fileBuffer: Buffer}) => {
 
-            return s3BucketService.upload("cvs-atf-reports", generationServiceResponse.fileName, generationServiceResponse.fileBuffer)
+            return s3BucketService.upload(`cvs-atf-reports-${process.env.BUCKET}`, generationServiceResponse.fileName, generationServiceResponse.fileBuffer)
             .then((result: any) => {
                 return result;
             });

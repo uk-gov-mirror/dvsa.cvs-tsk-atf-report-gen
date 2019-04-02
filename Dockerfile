@@ -15,4 +15,4 @@ RUN chmod +x /wait
 ## Create buckets and add the signature
 ## Start
 CMD /wait && \
-aws --endpoint-url=http://s3:7000 s3 mb s3://cvs-atf-reports
+aws --endpoint-url=http://s3:7000 s3 mb s3://cvs-atf-reports-local
