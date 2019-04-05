@@ -49,8 +49,8 @@ class ReportGenerationService {
                     const testType: any = testResult.testTypes;
 
                     detailsTemplate.activity.value = (activity.activityType === "visit") ? ActivityType.TEST : ActivityType.WAIT_TIME;
-                    detailsTemplate.startTime.value = moment(testResult.testStartTimestamp).format("DD/MM/YYYY");
-                    detailsTemplate.finishTime.value = moment(testResult.testEndTimestamp).format("DD/MM/YYYY");
+                    detailsTemplate.startTime.value = moment(testResult.testStartTimestamp).format("HH:mm:ss");
+                    detailsTemplate.finishTime.value = moment(testResult.testEndTimestamp).format("HH:mm:ss");
                     detailsTemplate.vrm.value = testResult.vrm;
                     detailsTemplate.testDescription.value = testType.testTypeName;
                     detailsTemplate.seatsAndAxles.value = (testResult.vehicleType === "psv") ? testResult.numberOfSeats : "" ;
