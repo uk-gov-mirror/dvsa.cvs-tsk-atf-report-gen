@@ -55,7 +55,7 @@ class ReportGenerationService {
                     detailsTemplate.testDescription.value = testType.testTypeName;
                     detailsTemplate.seatsAndAxles.value = (testResult.vehicleType === "psv") ? testResult.numberOfSeats : "" ;
                     detailsTemplate.result.value = testType.testResult;
-                    detailsTemplate.certificateNumber.value = testType.testNumber;
+                    detailsTemplate.certificateNumber.value = testType.certificateNumber;
                     detailsTemplate.expiryDate.value = moment(testType.testExpiryDate).format("DD/MM/YYYY");
                 }
 
