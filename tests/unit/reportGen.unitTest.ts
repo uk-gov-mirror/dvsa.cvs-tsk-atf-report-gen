@@ -1,15 +1,15 @@
-import {describe} from "mocha";
-import {expect} from "chai";
-import {Injector} from "../../src/models/injector/Injector";
+import { describe } from "mocha";
+import { expect } from "chai";
+import { Injector } from "../../src/models/injector/Injector";
 import * as fs from "fs";
 import * as path from "path";
-import {ReportGenerationService} from "../../src/services/ReportGenerationService";
-import {LambdaMockService} from "../models/LambdaMockService";
-import {TestResultsService} from "../../src/services/TestResultsService";
-import {Configuration} from "../../src/utils/Configuration";
-import {IActivity, IS3Config} from "../../src/models";
+import { ReportGenerationService } from "../../src/services/ReportGenerationService";
+import { LambdaMockService } from "../models/LambdaMockService";
+import { TestResultsService } from "../../src/services/TestResultsService";
+import { Configuration } from "../../src/utils/Configuration";
+import { IActivity, IS3Config } from "../../src/models";
 import * as Excel from "exceljs";
-import {Duplex} from "stream";
+import { Duplex } from "stream";
 
 describe("report-gen", () => {
     context("TestResultsService", () => {

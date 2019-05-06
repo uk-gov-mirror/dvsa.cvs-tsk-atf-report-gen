@@ -1,10 +1,11 @@
-import {IActivity} from "../models";
+import { IActivity } from "../models";
 import * as Excel from "exceljs";
 import * as path from "path";
-import {Service} from "../models/injector/ServiceDecorator";
-import {TestResultsService} from "./TestResultsService";
+import { Service } from "../models/injector/ServiceDecorator";
+import { TestResultsService } from "./TestResultsService";
 import moment = require("moment-timezone");
-import {ActivityType, TimeZone} from "../models/enums";
+import { ACTIVITY_TYPE, ERRORS, TIMEZONE } from "../assets/enum";
+import { HTTPError } from "../models/HTTPError";
 
 @Service()
 class ReportGenerationService {
@@ -35,12 +36,12 @@ class ReportGenerationService {
                 siteVisitDetails.assesor.value = activity.testerName;
                 siteVisitDetails.siteName.value = activity.testStationName;
                 siteVisitDetails.siteNumber.value = activity.testStationPNumber;
-                siteVisitDetails.date.value = moment(activity.startTime).tz(TimeZone.LONDON).format("DD/MM/YYYY");
-                siteVisitDetails.startTime.value = moment(activity.startTime).tz(TimeZone.LONDON).format("HH:mm:ss");
+                siteVisitDetails.date.value = moment(activity.startTime).tz(TIMEZONE.LONDON).format("DD/MM/YYYY");
+                siteVisitDetails.startTime.value = moment(activity.startTime).tz(TIMEZONE.LONDON).format("HH:mm:ss");
 
                 // Populate declaration
-                declaration.date.value = moment(activity.endTime).tz(TimeZone.LONDON).format("DD/MM/YYYY");
-                declaration.finishTime.value = moment(activity.endTime).tz(TimeZone.LONDON).format("HH:mm:ss");
+                declaration.date.value = moment(activity.endTime).tz(TIMEZONE.LONDON).format("DD/MM/YYYY");
+                declaration.finishTime.value = moment(activity.endTime).tz(TIMEZONE.LONDON).format("HH:mm:ss");
 
                 // Populate activity report
                 for (let i = 0, j = 0; i < template.reportTemplate.activityDetails.length && j < testResults.length; i++, j++) {
@@ -48,27 +49,30 @@ class ReportGenerationService {
                     const testResult: any = testResults[j];
                     const testType: any = testResult.testTypes;
 
-                    detailsTemplate.activity.value = (activity.activityType === "visit") ? ActivityType.TEST : ActivityType.WAIT_TIME;
-                    detailsTemplate.startTime.value = moment(testResult.testStartTimestamp).tz(TimeZone.LONDON).format("HH:mm:ss");
-                    detailsTemplate.finishTime.value = moment(testResult.testEndTimestamp).tz(TimeZone.LONDON).format("HH:mm:ss");
+                    detailsTemplate.activity.value = (activity.activityType === "visit") ? ACTIVITY_TYPE.TEST : ACTIVITY_TYPE.WAIT_TIME;
+                    detailsTemplate.startTime.value = moment(testResult.testStartTimestamp).tz(TIMEZONE.LONDON).format("HH:mm:ss");
+                    detailsTemplate.finishTime.value = moment(testResult.testEndTimestamp).tz(TIMEZONE.LONDON).format("HH:mm:ss");
                     detailsTemplate.vrm.value = testResult.vrm;
                     detailsTemplate.testDescription.value = testType.testTypeName;
                     detailsTemplate.seatsAndAxles.value = (testResult.vehicleType === "psv") ? testResult.numberOfSeats : "" ;
                     detailsTemplate.result.value = testType.testResult;
                     detailsTemplate.certificateNumber.value = testType.certificateNumber;
-                    detailsTemplate.expiryDate.value = moment(testType.testExpiryDate).tz(TimeZone.LONDON).format("DD/MM/YYYY");
+                    detailsTemplate.expiryDate.value = moment(testType.testExpiryDate).tz(TIMEZONE.LONDON).format("DD/MM/YYYY");
                 }
 
                 return template.workbook.xlsx.writeBuffer()
                 .then((buffer: Excel.Buffer) => {
                     return {
-                        fileName: `ATFReport_${moment(activity.startTime).tz(TimeZone.LONDON).format("DD-MM-YYYY")}`
-                            + `_${moment(activity.startTime).tz(TimeZone.LONDON).format("HHmm")}`
-                            + `_${activity.testStationPNumber}_${activity.testerName}.xlsx`,
-                        fileBuffer: buffer
+                        // tslint:disable-next-line
+                        fileName: `ATFReport_${moment(activity.startTime).tz(TIMEZONE.LONDON).format("DD-MM-YYYY")}_${moment(activity.startTime).tz(TIMEZONE.LONDON).format("HHmm")}_${activity.testStationPNumber}_${activity.testerName}.xlsx`,
+                        fileBuffer: buffer,
+                        testResults
                     };
                 });
             });
+        }).catch((error: any) => {
+            console.log(error);
+            throw new HTTPError(500, ERRORS.ATF_CANT_BE_CREATED);
         });
     }
 

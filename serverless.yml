@@ -47,16 +47,29 @@ custom:
   dependency-invoke:
     storage: dependencies
     dependencies:
-    - name: cvs-svc-test-results
-      lang: javascript
-      git: git@github.com:dvsa/cvs-svc-test-results.git
-      branch: feature/CVSB-1241
-      handler: src/functions/getTestResultsByTesterStaffId.getTestResultsByTesterStaffId
-      commands:
-      - npm install
-      - lsof -i tcp:8004 | awk 'NR!=1 {print $2}' | xargs kill || true
-      - node_modules/serverless/bin/serverless dynamodb install
-      - "sed -i '' 's/migrate: false/migrate: true/g' serverless.yml"
-      - "sed -i '' 's/seed: false/seed: true/g' serverless.yml"
-      - "sed -i '' 's/noStart: true/noStart: false/g' serverless.yml"
-      - node_modules/serverless/bin/serverless dynamodb start
+      - name: cvs-svc-test-results
+        lang: javascript
+        git: git@github.com:dvsa/cvs-svc-test-results.git
+        branch: feature/CVSB-1241
+        handler: src/functions/getTestResultsByTesterStaffId.getTestResultsByTesterStaffId
+        commands:
+          - npm install
+          - lsof -i tcp:8004 | awk 'NR!=1 {print $2}' | xargs kill || true
+          - node_modules/serverless/bin/serverless dynamodb install
+          - "sed -i '' 's/migrate: false/migrate: true/g' serverless.yml"
+          - "sed -i '' 's/seed: false/seed: true/g' serverless.yml"
+          - "sed -i '' 's/noStart: true/noStart: false/g' serverless.yml"
+          - node_modules/serverless/bin/serverless dynamodb start
+      - name: cvs-svc-test-stations
+        lang: javascript
+        git: git@github.com:dvsa/cvs-svc-test-stations.git
+        branch: feature/CVSB-2868
+        handler: src/handler.handler
+        commands:
+          - npm install
+          - lsof -i tcp:8007 | awk 'NR!=1 {print $2}' | xargs kill || true
+          - node_modules/serverless/bin/serverless dynamodb install
+          - "sed -i '' 's/migrate: false/migrate: true/g' serverless.yml"
+          - "sed -i '' 's/seed: false/seed: true/g' serverless.yml"
+          - "sed -i '' 's/noStart: true/noStart: false/g' serverless.yml"
+          - node_modules/serverless/bin/serverless dynamodb start

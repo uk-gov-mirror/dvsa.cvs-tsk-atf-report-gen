@@ -7,14 +7,36 @@ invoke:
       testResults:
           name: cvs-svc-test-results
           mock: tests/resources/test-results-200-response.json
+      testStations:
+          name: cvs-svc-test-stations
+          mock: tests/resources/test-stations-200-response.json
   remote:
     params:
       apiVersion: 2015-03-31
     functions:
       testResults:
           name: test-results-${BRANCH}
+      testStations:
+          name: test-stations-${BRANCH}
 s3:
   local:
     endpoint: http://localhost:7000
     s3ForcePathStyle: true
   remote: {}
+notify:
+  documentNames:
+    vt20: VT20.pdf
+    vt20w: VT20W.pdf
+    vt30: VT30.pdf
+    vt30w: VT30W.pdf
+    vt32ve: VT32VE.pdf
+    vt32vew: VT32VEW.pdf
+    prs: PRS.pdf
+    prsw: PRSW.pdf
+    ct20: CT20.pdf
+    ct30: CT30.pdf
+    vtp20: VTP20.pdf
+    vtp30: VTP30.pdf
+    psv_prs: PSV_PRS.pdf
+    vtg5: VTG5.pdf
+    vtg5a: VTG5A.pdf

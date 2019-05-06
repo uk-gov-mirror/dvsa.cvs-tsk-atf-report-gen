@@ -1,0 +1,8 @@
+{
+  "headers": {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Credentials": true
+  },
+  "statusCode": 200,
+  "body": "[{\"testStationPNumber\": \"87-1369569\",\"testStationEmails\": [\"teststationname@dvsa.gov.uk\",\"teststationname1@dvsa.gov.uk\",\"teststationname2@dvsa.gov.uk\"],\"testStationId\": \"1\"\n}]"
+}

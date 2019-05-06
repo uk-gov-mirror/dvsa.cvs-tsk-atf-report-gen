@@ -15,7 +15,9 @@
     "member-ordering": false,
     "ordered-imports": false,
     "jsdoc-format": true,
-    "completed-docs": [true, "methods"]
+    "completed-docs": [true, "methods"],
+    "whitespace": [true, "check-module"]
+
   },
   "linterOptions": {
     "exclude": [

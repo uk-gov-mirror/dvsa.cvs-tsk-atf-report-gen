@@ -1,10 +1,10 @@
-import S3, {Metadata} from "aws-sdk/clients/s3";
-import {config as AWSConfig} from "aws-sdk";
-import {Service} from "../models/injector/ServiceDecorator";
-import {Readable} from "stream";
-import {Configuration} from "../utils/Configuration";
-import {IS3Config} from "../models";
-import {ManagedUpload} from "aws-sdk/lib/s3/managed_upload";
+import S3, { Metadata } from "aws-sdk/clients/s3";
+import { config as AWSConfig } from "aws-sdk";
+import { Service } from "../models/injector/ServiceDecorator";
+import { Readable } from "stream";
+import { Configuration } from "../utils/Configuration";
+import { IS3Config } from "../models";
+import { ManagedUpload } from "aws-sdk/lib/s3/managed_upload";
 import SendData = ManagedUpload.SendData;
 /* tslint:disable */
 const AWSXRay = require("aws-xray-sdk");

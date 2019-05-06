@@ -1,7 +1,7 @@
 import { LambdaService } from "../../src/services/LambdaService";
-import {describe} from "mocha";
-import {expect} from "chai";
-import {Lambda} from "aws-sdk";
+import { describe } from "mocha";
+import { expect } from "chai";
+import { Lambda } from "aws-sdk";
 
 describe("When LambdaService ", () => {
     context("gets 404", () => {

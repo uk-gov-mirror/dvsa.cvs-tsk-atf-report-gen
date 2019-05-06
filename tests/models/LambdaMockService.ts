@@ -1,7 +1,7 @@
-import {AWSError, Lambda, Response} from "aws-sdk";
-import {PromiseResult} from "aws-sdk/lib/request";
-import {Configuration} from "../../src/utils/Configuration";
-import {IInvokeConfig} from "../../src/models";
+import { AWSError, Lambda, Response } from "aws-sdk";
+import { PromiseResult } from "aws-sdk/lib/request";
+import { Configuration } from "../../src/utils/Configuration";
+import { IInvokeConfig } from "../../src/models";
 import * as fs from "fs";
 import * as path from "path";
 

@@ -1,8 +1,8 @@
-import {IInvokeConfig} from "../models";
-import {Configuration} from "../utils/Configuration";
-import {AWSError, config as AWSConfig, Lambda} from "aws-sdk";
-import {Service} from "../models/injector/ServiceDecorator";
-import {PromiseResult} from "aws-sdk/lib/request";
+import { IInvokeConfig } from "../models";
+import { Configuration } from "../utils/Configuration";
+import { AWSError, config as AWSConfig, Lambda } from "aws-sdk";
+import { Service } from "../models/injector/ServiceDecorator";
+import { PromiseResult } from "aws-sdk/lib/request";
 /* tslint:disable */
 const AWSXRay = require("aws-xray-sdk");
 /* tslint:enable */
@@ -26,8 +26,7 @@ class LambdaService {
      * @param params - InvocationRequest params
      */
     public async invoke(params: Lambda.Types.InvocationRequest): Promise<PromiseResult<Lambda.Types.InvocationResponse, AWSError>> {
-        return this.lambdaClient.invoke(params)
-            .promise();
+        return this.lambdaClient.invoke(params).promise();
     }
 
     public convertEmptyResponse(payload: any) {

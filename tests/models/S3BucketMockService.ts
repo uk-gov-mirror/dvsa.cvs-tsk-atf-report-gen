@@ -1,10 +1,6 @@
-import S3, {Metadata} from "aws-sdk/clients/s3";
-import {AWSError, Response} from "aws-sdk";
-import {Readable} from "stream";
-import {PromiseResult} from "aws-sdk/lib/request";
-import {ManagedUpload} from "aws-sdk/lib/s3/managed_upload";
-import * as fs from "fs";
-import * as path from "path";
+import { Metadata } from "aws-sdk/clients/s3";
+import { Readable } from "stream";
+import { ManagedUpload } from "aws-sdk/lib/s3/managed_upload";
 
 interface IBucket {
     bucketName: string;
@@ -49,64 +45,6 @@ class S3BucketMockService {
         };
 
         return response;
-    }
-
-    /**
-     * Downloads a file from an S3 bucket
-     * @param bucketName - the bucket from which to download
-     * @param fileName - the name of the file
-     */
-    public async download(bucketName: string, fileName: string): Promise<PromiseResult<S3.Types.GetObjectOutput, AWSError>> {
-        const bucket: IBucket | undefined = S3BucketMockService.buckets.find((currentBucket: IBucket) => {
-            return currentBucket.bucketName === bucketName;
-        });
-
-        if (!bucket) {
-            const error: Error = new Error();
-            Object.assign(error, {
-                message: "The specified bucket does not exist.",
-                code: "NoSuchBucket",
-                statusCode: 404,
-                retryable: false
-            });
-
-            throw error;
-        }
-
-        // @ts-ignore
-        const bucketKey: string | undefined = bucket.files.find((currentFileName: string) => {
-            return currentFileName === fileName;
-        });
-
-        if (!bucketKey) {
-            const error: Error = new Error();
-            Object.assign(error, {
-                message: "The specified key does not exist.",
-                code: "NoSuchKey",
-                statusCode: 404,
-                retryable: false
-            });
-
-            throw error;
-        }
-
-        // @ts-ignore
-        const file: Buffer = fs.readFileSync(path.resolve(__dirname, `../resources/signatures/${bucketKey}`));
-        const data: S3.Types.GetObjectOutput = {
-            Body: file,
-            ContentLength: file.length,
-            ETag: "621c9c14d75958d4c3ed8ad77c80cde1",
-            LastModified: new Date(),
-            Metadata: {}
-        };
-
-        const response = new Response<S3.Types.GetObjectOutput, AWSError>();
-        Object.assign(response, { data });
-
-        return {
-            $response: response,
-            ...data
-        };
     }
 }
 

@@ -1,6 +1,7 @@
 // @ts-ignore
 import * as yml from "node-yaml";
-import {IInvokeConfig, IS3Config} from "../models";
+import { IInvokeConfig, IS3Config, IMOTConfig } from "../models";
+import { ERRORS } from "../assets/enum";
 
 class Configuration {
 
@@ -9,6 +10,7 @@ class Configuration {
 
     private constructor(configPath: string) {
         this.config = yml.readSync(configPath);
+        const secretConfig = yml.readSync("../config/secrets.yml");
 
         // Replace environment variable references
         let stringifiedConfig: string = JSON.stringify(this.config);
@@ -26,6 +28,7 @@ class Configuration {
         }
 
         this.config = JSON.parse(stringifiedConfig);
+        Object.assign(this.config.notify, { api_key: secretConfig.notify.api_key, endpoint: secretConfig.notify.endpoint });
     }
 
     /**
@@ -54,7 +57,7 @@ class Configuration {
      */
     public getS3Config(): IS3Config {
         if (!this.config.s3) {
-            throw new Error("DynamoDB config is not defined in the config file.");
+            throw new Error(ERRORS.DYNAMO_DB_CONFIG_NOT_DEFINED);
         }
 
         // Not defining BRANCH will default to local
@@ -78,6 +81,17 @@ class Configuration {
         return this.config.invoke[env];
     }
 
+    /**
+     * Retrieves the Gov Notify config
+     * @returns IMOTConfig
+     */
+    public getGovNotifyConfig(): IMOTConfig {
+        if (!this.config.notify) {
+            throw new Error(ERRORS.MOT_CONFIG_NOT_DEFINED);
+        }
+
+        return this.config.notify;
+    }
 
 }
 

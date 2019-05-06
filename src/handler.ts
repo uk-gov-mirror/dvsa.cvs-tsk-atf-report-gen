@@ -1,5 +1,5 @@
-import {reportGen} from "./functions/reportGen";
-import {config as AWSConfig} from "aws-sdk";
+import { reportGen } from "./functions/reportGen";
+import { config as AWSConfig } from "aws-sdk";
 
 const isOffline: boolean = (!process.env.BRANCH || process.env.BRANCH === "local");
 

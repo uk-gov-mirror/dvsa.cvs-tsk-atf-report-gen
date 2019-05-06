@@ -1,5 +1,5 @@
-import {GenericClassDecorator, Type} from "./GenericClassDecorator";
-import {Injector} from "./Injector";
+import { GenericClassDecorator, Type } from "./GenericClassDecorator";
+import { Injector } from "./Injector";
 
 /**
  * @returns {GenericClassDecorator<Type<any>>}

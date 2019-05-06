@@ -3,7 +3,7 @@ const exec = require('child_process').exec;
 const process = require('process');
 
 gulp.task('start-serverless', function (done) {
-    const instance = exec('node_modules/serverless/bin/serverless offline start &', { env: process.env });
+    const instance = exec('AWS_XRAY_CONTEXT_MISSING=LOG_ERROR node_modules/serverless/bin/serverless offline start &', { env: process.env });
 
     instance.stdout.on('data', function (output) {
         process.stdout.write(output);

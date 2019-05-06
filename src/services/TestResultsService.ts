@@ -1,10 +1,10 @@
-import {IInvokeConfig} from "../models";
-import {PromiseResult} from "aws-sdk/lib/request";
-import {AWSError, Lambda} from "aws-sdk";
-import {LambdaService} from "./LambdaService";
-import {Configuration} from "../utils/Configuration";
+import { IInvokeConfig } from "../models";
+import { PromiseResult } from "aws-sdk/lib/request";
+import { AWSError, Lambda } from "aws-sdk";
+import { LambdaService } from "./LambdaService";
+import { Configuration } from "../utils/Configuration";
 import moment from "moment";
-import {Service} from "../models/injector/ServiceDecorator";
+import { Service } from "../models/injector/ServiceDecorator";
 
 @Service()
 class TestResultsService {

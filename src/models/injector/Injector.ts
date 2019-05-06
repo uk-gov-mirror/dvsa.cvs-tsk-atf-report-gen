@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import {Type} from "./GenericClassDecorator";
+import { Type } from "./GenericClassDecorator";
 
 /**
  * The Injector stores services and resolves requested instances.
