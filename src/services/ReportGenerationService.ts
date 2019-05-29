@@ -62,6 +62,7 @@ class ReportGenerationService {
                 return template.workbook.xlsx.writeBuffer()
                 .then((buffer: Excel.Buffer) => {
                     return {
+                        // tslint:disable-next-line
                         fileName: `ATFReport_${moment(activity.startTime).tz(TimeZone.LONDON).format("DD-MM-YYYY")}_${moment(activity.startTime).tz(TimeZone.LONDON).format("HHmm")}_${activity.testStationPNumber}_${activity.testerName}.xlsx`,
                         fileBuffer: buffer
                     };
