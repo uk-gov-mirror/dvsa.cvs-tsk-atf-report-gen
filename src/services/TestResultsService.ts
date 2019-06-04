@@ -38,10 +38,6 @@ class TestResultsService {
             const payload: any = this.lambdaClient.validateInvocationResponse(response); // Response validation
             const testResults: any[] = JSON.parse(payload.body); // Response conversion
 
-            if (!testResults || testResults.length === 0) { // Conversion validation
-                throw new Error(`Lambda invocation returned bad data: ${JSON.stringify(payload)}.`);
-            }
-
             // Sort results by testEndTimestamp
             testResults.sort((first: any, second: any): number => {
                 if (moment(first.testEndTimestamp).isBefore(second.testEndTimestamp)) {
