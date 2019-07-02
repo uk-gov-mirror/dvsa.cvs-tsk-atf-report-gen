@@ -184,6 +184,12 @@ describe("report-gen", () => {
                     const stream = new Duplex();
                     stream.push(result.fileBuffer); // Convert the incoming file to a readable stream
                     stream.push(null);
+                    .then(() => {
+                        expect.fail();
+                    })
+                    .catch((error: any) => {
+                        expect(error).to.be.instanceOf(Error);
+                    });
 
                     return workbook.xlsx.read(stream)
                     .then((excelFile: any) => {
