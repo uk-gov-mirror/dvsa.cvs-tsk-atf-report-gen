@@ -23,11 +23,10 @@ class NotificationData {
       ^• Time: ${this.formatDateAndTime(testResult.testTypes.testTypeStartTimestamp, "time")} - ${this.formatDateAndTime(testResult.testTypes.testTypeEndTimeStamp, "time")}
       ^• Test description: ${testResult.testTypes.testTypeName}
       ^• Axles / Seats: ${testResult.numberOfSeats}
-      ^• Result: ${this.capitalise(testResult.testTypes.testResult)}
-      ^${testResult.testTypes.certificateNumber ? `• Certificate number: ${testResult.testTypes.certificateNumber}` : ""}
-      ^${testResult.testTypes.testExpiryDate ? `• Expiry date: ${this.formatDateAndTime(testResult.testTypes.testExpiryDate, "date")}` : ""}
-      ${(index < testResultsList.length - 2) ? `---` : ""}
-      `; // Add divider line if all BUT last entry (index is 0 based, length is 1 based, so need -2 to get all but last)
+      ^• Result: ${this.capitalise(testResult.testTypes.testResult)}`
+      + `${testResult.testTypes.certificateNumber ? `\n^• Certificate number: ${testResult.testTypes.certificateNumber}` : ""}`
+      + `${testResult.testTypes.testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime(testResult.testTypes.testExpiryDate, "date")}` : ""}`
+      + `${(index < testResultsList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
     }
     return personalization;
   }
