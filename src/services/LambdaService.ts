@@ -29,6 +29,10 @@ class LambdaService {
         return this.lambdaClient.invoke(params).promise();
     }
 
+    /**
+     * Tidy up empty responses. Purpose unclear.
+     * @param payload
+     */
     public convertEmptyResponse(payload: any) {
         payload.body = "[]";
         payload.statusCode = 200;

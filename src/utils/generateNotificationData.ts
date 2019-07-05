@@ -1,5 +1,5 @@
 import moment = require("moment-timezone");
-import { TIMEZONE } from "../assets/enum";
+import { ACTIVITY_TYPE, TIMEZONE } from "../assets/enum";
 
 class NotificationData {
   /**
@@ -16,16 +16,18 @@ class NotificationData {
     personalization.startTime = this.formatDateAndTime(visit.startTime, "time");
     personalization.endTime = this.formatDateAndTime(visit.endTime, "time");
     personalization.testStationName = visit.testStationName;
-    personalization.activityDetails = [];
-    personalization.activityType = visit.activityType;
-    for (const testResult of testResultsList) {
-      personalization.activityDetails.push(`^#${personalization.activityType.charAt(0).toUpperCase() + personalization.activityType.slice(1)} ${testResult.vrm}
+    personalization.activityDetails = "";
+    personalization.activityType = (visit.activityType === "visit") ? ACTIVITY_TYPE.TEST : ACTIVITY_TYPE.WAIT_TIME;
+    for (const [index, testResult] of testResultsList.entries()) {
+      personalization.activityDetails += `^#${this.capitalise(personalization.activityType)} (${testResult.vrm})
       ^• Time: ${this.formatDateAndTime(testResult.testTypes.testTypeStartTimestamp, "time")} - ${this.formatDateAndTime(testResult.testTypes.testTypeEndTimeStamp, "time")}
       ^• Test description: ${testResult.testTypes.testTypeName}
       ^• Axles / Seats: ${testResult.numberOfSeats}
-      ^• Result: ${testResult.testTypes.testResult}
+      ^• Result: ${this.capitalise(testResult.testTypes.testResult)}
       ^${testResult.testTypes.certificateNumber ? `• Certificate number: ${testResult.testTypes.certificateNumber}` : ""}
-      ^${testResult.testTypes.testExpiryDate ? `• Expiry date: ${this.formatDateAndTime(testResult.testTypes.testExpiryDate, "date")}` : ""}`);
+      ^${testResult.testTypes.testExpiryDate ? `• Expiry date: ${this.formatDateAndTime(testResult.testTypes.testExpiryDate, "date")}` : ""}
+      ${(index < testResultsList.length - 2) ? `---` : ""}
+      `; // Add divider line if all BUT last entry (index is 0 based, length is 1 based, so need -2 to get all but last)
     }
     return personalization;
   }
@@ -43,6 +45,17 @@ class NotificationData {
       case "time":
         return moment(param).tz(TIMEZONE.LONDON).format("HH:mm:ss");
     }
+  }
+
+  /**
+   * Make first character of string upper case
+   * @param str
+   */
+  private capitalise(str: string) {
+    if(!str) {
+      return str;
+    }
+    return str.charAt(0).toUpperCase() + str.slice(1);
   }
 }
 

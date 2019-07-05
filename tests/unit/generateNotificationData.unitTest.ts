@@ -22,7 +22,7 @@ describe("notificationData", () => {
                 expect(sendNotificationData.startTimeDate).to.equal("14/01/2019");
                 expect(sendNotificationData.startTime).to.equal("08:47:33");
                 expect(sendNotificationData.endTime).to.equal("15:36:33");
-                expect(sendNotificationData.activityType).to.equal(visit.activityType);
+                expect(sendNotificationData.activityType).to.equal("Test");
                 expect(sendNotificationData.activityDetails.length).to.not.equal(0);
             });
         });

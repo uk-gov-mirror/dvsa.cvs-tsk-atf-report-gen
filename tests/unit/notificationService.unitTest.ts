@@ -32,7 +32,7 @@ describe("notification service", () => {
                     expect(response.personalisation.endTime).to.equal("15:36:33");
                     expect(response.personalisation.testStationName).to.equal("Rowe, Wunsch and Wisoky");
                     expect(response.personalisation.activityDetails.length).to.not.equal(0);
-                    expect(response.personalisation.activityType).to.equal("visit");
+                    expect(response.personalisation.activityType).to.equal("Test");
                 });
             });
         });
