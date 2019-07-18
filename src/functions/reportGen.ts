@@ -4,6 +4,7 @@ import { ManagedUpload } from "aws-sdk/clients/s3";
 import { ReportGenerationService } from "../services/ReportGenerationService";
 import { AWSError } from "aws-sdk";
 import { SendATFReport } from "../services/SendATFReport";
+import { ERRORS } from "../assets/enum";
 
 /**
  * λ function to process a DynamoDB stream of test results into a queue for certificate generation.
@@ -12,9 +13,9 @@ import { SendATFReport } from "../services/SendATFReport";
  * @param callback - callback function
  */
 const reportGen: Handler = async (event: any, context?: Context, callback?: Callback): Promise<void | ManagedUpload.SendData[]> => {
-    if (!event) {
+    if (!event || !event.Records || !Array.isArray(event.Records) || !event.Records.length) {
         console.error("ERROR: event is not defined.");
-        return;
+        throw new Error(ERRORS.EVENT_IS_EMPTY);
     }
     const reportService: ReportGenerationService = Injector.resolve<ReportGenerationService>(ReportGenerationService);
     const retroUploadPromises: Array<Promise<ManagedUpload.SendData>> = [];
