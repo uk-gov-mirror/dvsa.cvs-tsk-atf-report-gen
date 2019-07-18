@@ -35,13 +35,13 @@ class TestStationsService {
             }),
         };
         return this.lambdaClient.invoke(invokeParams)
-            .then((response: PromiseResult<Lambda.Types.InvocationResponse, AWSError>) => {
+            .then((response: Lambda.Types.InvocationResponse) => {
                 const payload: any = this.lambdaClient.validateInvocationResponse(response); // Response validation
                 const testStationEmails: any[] = JSON.parse(payload.body); // Response conversion
                 return testStationEmails;
             }).catch((error) => {
                 console.log(error);
-                throw new HTTPError(500, "Internal server error");
+                throw new HTTPError(500, error.message);
             });
     }
 }
