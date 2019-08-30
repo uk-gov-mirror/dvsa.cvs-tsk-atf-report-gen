@@ -1,4 +1,3 @@
-import { describe } from "mocha";
 import { expect } from "chai";
 import { Injector } from "../../src/models/injector/Injector";
 import * as fs from "fs";
@@ -39,6 +38,29 @@ describe("ReportGenerationService", () => {
                             expect(activityDetails.length).to.equal(10);
                         });
                 });
+
+                it("should still return a template when requested length is 0", () => {
+                    return reportGenerationService.fetchATFTemplate(0)
+                        .then((result: any) => {
+                            const siteVisitDetails: any = result.reportTemplate.siteVisitDetails;
+                            const declaration: any = result.reportTemplate.declaration;
+                            const activityDetails: any = result.reportTemplate.activityDetails;
+
+                            // Validate site visit details
+                            expect(siteVisitDetails.assesor._address).to.equal("D10");
+                            expect(siteVisitDetails.date._address).to.equal("D11");
+                            expect(siteVisitDetails.siteName._address).to.equal("G10");
+                            expect(siteVisitDetails.siteNumber._address).to.equal("G11");
+                            expect(siteVisitDetails.startTime._address).to.equal("D12");
+
+                            // Validate declaration
+                            expect(declaration.date._address).to.equal("D17");
+                            expect(declaration.finishTime._address).to.equal("G17");
+
+                            // Validate activity details
+                            expect(activityDetails.length).to.equal(0);
+                        });
+                });
             });
         });
 
@@ -61,8 +83,31 @@ describe("ReportGenerationService", () => {
                                 expect(excelFile.creator).to.equal("Commercial Vehicles Services Beta Team");
                                 expect(excelFile.company).to.equal("Drivers and Vehicles Standards Agency");
                                 expect(reportSheet.name).to.equal("ATF Report");
+                                expect(reportSheet.getCell("C24").value).to.equal("Activity");
+                                // tslint:disable-next-line
+                                expect(reportSheet.getCell("C25").value).to.not.be.null;
                             });
                     });
+            });
+
+            context("and testResults returns cancelled tests", ()=> {
+                it("should generate an empty report", async () => {
+                    // TestResultsService.prototype.getTestResults = jest.fn().mockImplementation(() => {return cancelledTest});
+                    LambdaMockService.changeResponse("cvs-svc-test-results", "tests/resources/cancelled-test-result.json");
+
+                    const output = await reportGenerationService.generateATFReport(activity);
+                    const workbook = new Excel.Workbook();
+                    const stream = new Duplex();
+                    stream.push(output.fileBuffer); // Convert the incoming file to a readable stream
+                    stream.push(null);
+
+                    const excelFile = await workbook.xlsx.read(stream);
+                    const reportSheet: Excel.Worksheet = excelFile.getWorksheet(1);
+
+                    expect(reportSheet.getCell("C24").value).to.equal("Activity");
+                    // tslint:disable-next-line
+                    expect(reportSheet.getCell("C25").value).to.be.null;
+                });
             });
         });
     });
