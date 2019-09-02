@@ -1,4 +1,3 @@
-import { describe } from "mocha";
 import { expect } from "chai";
 import { LambdaMockService } from "../models/LambdaMockService";
 import { NotificationData } from "../../src/utils/generateNotificationData";

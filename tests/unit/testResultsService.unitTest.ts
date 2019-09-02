@@ -1,4 +1,3 @@
-import { describe } from "mocha";
 import { expect } from "chai";
 import { Injector } from "../../src/models/injector/Injector";
 import { LambdaMockService } from "../models/LambdaMockService";

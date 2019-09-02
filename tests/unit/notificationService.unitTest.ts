@@ -1,4 +1,3 @@
-import { describe } from "mocha";
 import { expect } from "chai";
 import { Configuration } from "../../src/utils/Configuration";
 import { NotificationService } from "../../src/services/NotificationService";
