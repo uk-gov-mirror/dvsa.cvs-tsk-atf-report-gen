@@ -1,4 +1,3 @@
-import { describe } from "mocha";
 import { expect } from "chai";
 import { SendATFReport } from "../../src/services/SendATFReport";
 import { Injector } from "../../src/models/injector/Injector";

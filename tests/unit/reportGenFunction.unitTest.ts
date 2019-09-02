@@ -1,4 +1,3 @@
-import { describe } from "mocha";
 import { expect } from "chai";
 import { reportGen } from "../../src/functions/reportGen";
 import mockContext from "aws-lambda-mock-context";
