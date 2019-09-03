@@ -28,7 +28,10 @@ class ReportGenerationService {
         })
         .then((testResults) => {
             // CVSB-7623 - exclude cancelled tests from reports
-            return testResults.filter((test: any) =>test.testStatus !== "cancelled");
+            console.log("Before filtering", testResults);
+            let filteredResults = testResults.filter((test: any) =>test.testStatus !== "cancelled");
+            console.log("After filtering", filteredResults);
+            return filteredResults;
         })
         .then((testResults: any) => {
             // Fetch and populate the ATF template
