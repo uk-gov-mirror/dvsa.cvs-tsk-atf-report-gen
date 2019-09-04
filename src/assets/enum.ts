@@ -18,3 +18,7 @@ export enum ACTIVITY_TYPE {
 export enum TIMEZONE {
     LONDON = "Europe/London"
 }
+
+export enum STATUSES {
+    SUBMITTED = "submitted"
+}

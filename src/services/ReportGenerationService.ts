@@ -4,7 +4,7 @@ import * as path from "path";
 import { Service } from "../models/injector/ServiceDecorator";
 import { TestResultsService } from "./TestResultsService";
 import moment = require("moment-timezone");
-import { ACTIVITY_TYPE, ERRORS, TIMEZONE } from "../assets/enum";
+import {ACTIVITY_TYPE, ERRORS, STATUSES, TIMEZONE} from "../assets/enum";
 import { HTTPError } from "../models/HTTPError";
 
 @Service()
@@ -24,7 +24,8 @@ class ReportGenerationService {
             testerStaffId: activity.testerStaffId,
             fromDateTime: activity.startTime,
             toDateTime: activity.endTime,
-            testStationPNumber: activity.testStationPNumber
+            testStationPNumber: activity.testStationPNumber,
+            testStatus: STATUSES.SUBMITTED
         })
         .then((testResults) => {
             // CVSB-7623 - exclude cancelled tests from reports
