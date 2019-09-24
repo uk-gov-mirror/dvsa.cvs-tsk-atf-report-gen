@@ -33,17 +33,14 @@ class ReportGenerationService {
         })
         .then((testResults: any) => {
             // Fetch 'wait' activities for this visit activity
-
             return this.activitiesService.getActivities({
                 testerStaffId: activity.testerStaffId,
                 fromStartTime: activity.startTime,
                 toStartTime: activity.endTime,
                 testStationPNumber: activity.testStationPNumber,
                 activityType: "wait",
-            }).then((result: any[]) => {
-                waitActivities = result;
-                console.log(`wait Activities Size: ${result.length}`);
-
+            }).then((waitActivities: any[]) => {
+                console.log(`wait Activities Size: ${waitActivities.length}`);
                 const totalActivitiesLen = testResults.length + waitActivities.length;
                 console.log(`Total Activities Len: ${totalActivitiesLen}`);
                 // Fetch and populate the ATF template
@@ -79,6 +76,7 @@ class ReportGenerationService {
                             detailsTemplate.certificateNumber.value = testType.certificateNumber;
                             detailsTemplate.expiryDate.value = moment(testType.testExpiryDate).tz(TIMEZONE.LONDON).format("DD/MM/YYYY");
                         }
+                        console.log(`Checking for wait activities details.`);
                         // Populate wait activities in the report
                         for (let i = testResults.length, j = 0; i < template.reportTemplate.activityDetails.length && j < waitActivities.length; i++, j++) {
                             console.log(`Populating wait activities details in report`);
@@ -86,8 +84,7 @@ class ReportGenerationService {
                             const waitActivityResult: any = waitActivities[j];
                             let waitReasons: string = "";
                             let additionalNotes: string = "";
-
-
+                            
                             if (waitActivityResult.waitReason) {
                                 waitReasons = `Reason for waiting: ${waitActivityResult.waitReason};\r\n`;
                             }
@@ -99,7 +96,6 @@ class ReportGenerationService {
                             detailsTemplate.startTime.value = moment(waitActivityResult.startTime).tz(TIMEZONE.LONDON).format("HH:mm:ss");
                             detailsTemplate.finishTime.value = moment(waitActivityResult.endTime).tz(TIMEZONE.LONDON).format("HH:mm:ss");
                             detailsTemplate.failureAdvisoryItemsQAIComments.value = waitReasons + additionalNotes;
-
                         }
                         return template.workbook.xlsx.writeBuffer()
                             .then((buffer: Excel.Buffer) => {
