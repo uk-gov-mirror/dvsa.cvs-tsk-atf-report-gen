@@ -41,11 +41,13 @@ interface IActivity {
     testerStaffId: string;
     startTime: string;
     endTime: string;
+    waitReason: [string];
+    notes: string;
 }
 
 interface IInvokeConfig {
     params: { apiVersion: string; endpoint?: string; };
-    functions: { testResults: { name: string }, testStations: { name: string; mock: string } };
+    functions: { testResults: { name: string }, testStations: { name: string; mock: string }, getActivities: { name: string } };
 }
 
 export {IS3Config, IActivity, IInvokeConfig, IMOTConfig};

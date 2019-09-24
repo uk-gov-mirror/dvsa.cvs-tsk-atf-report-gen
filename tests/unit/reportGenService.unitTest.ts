@@ -8,10 +8,12 @@ import { TestResultsService } from "../../src/services/TestResultsService";
 import { IActivity } from "../../src/models";
 import * as Excel from "exceljs";
 import { Duplex } from "stream";
+import {ActivitiesService} from "../../src/services/ActivitiesService";
 
 describe("ReportGenerationService", () => {
         const testResultsService: TestResultsService = Injector.resolve<TestResultsService>(TestResultsService, [LambdaMockService]);
-        const reportGenerationService: ReportGenerationService = new ReportGenerationService(testResultsService);
+        const activitiesService: ActivitiesService = Injector.resolve<ActivitiesService>(ActivitiesService, [LambdaMockService]);
+        const reportGenerationService: ReportGenerationService = new ReportGenerationService(testResultsService, activitiesService);
         LambdaMockService.populateFunctions();
 
         context("when generating a template", () => {
