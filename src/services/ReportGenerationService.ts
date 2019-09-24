@@ -44,7 +44,7 @@ class ReportGenerationService {
                 const totalActivitiesLen = testResults.length + waitActivities.length;
                 console.log(`Total Activities Len: ${totalActivitiesLen}`);
                 // Fetch and populate the ATF template
-                return this.fetchATFTemplate(testResults.length)
+                return this.fetchATFTemplate(totalActivitiesLen)
                     .then((template: { workbook: Excel.Workbook, reportTemplate: any }) => {
                         const siteVisitDetails: any = template.reportTemplate.siteVisitDetails;
                         const declaration: any = template.reportTemplate.declaration;
@@ -76,11 +76,9 @@ class ReportGenerationService {
                             detailsTemplate.certificateNumber.value = testType.certificateNumber;
                             detailsTemplate.expiryDate.value = moment(testType.testExpiryDate).tz(TIMEZONE.LONDON).format("DD/MM/YYYY");
                         }
-                        console.log(`Checking for wait activities details.`);
-                        console.log(`Two: wait Activities Size: ${waitActivities.length}`);
-                        console.log(`Two: TestResults Size: ${testResults.length}`);
+
                         // Populate wait activities in the report
-                        for (let i = testResults.length, j = 0; j < waitActivities.length; i++, j++) {
+                        for (let i = testResults.length, j = 0; i < template.reportTemplate.activityDetails.length && j < waitActivities.length; i++, j++) {
                             console.log(`Populating wait activities details in report`);
                             const detailsTemplate: any = template.reportTemplate.activityDetails[i];
                             const waitActivityResult: any = waitActivities[j];
