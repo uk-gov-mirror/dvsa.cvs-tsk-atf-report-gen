@@ -77,14 +77,16 @@ class ReportGenerationService {
                             detailsTemplate.expiryDate.value = moment(testType.testExpiryDate).tz(TIMEZONE.LONDON).format("DD/MM/YYYY");
                         }
                         console.log(`Checking for wait activities details.`);
+                        console.log(`Two: wait Activities Size: ${waitActivities.length}`);
+                        console.log(`Two: TestResults Size: ${testResults.length}`);
                         // Populate wait activities in the report
-                        for (let i = testResults.length, j = 0; i < template.reportTemplate.activityDetails.length && j < waitActivities.length; i++, j++) {
+                        for (let i = testResults.length, j = 0; j < waitActivities.length; i++, j++) {
                             console.log(`Populating wait activities details in report`);
                             const detailsTemplate: any = template.reportTemplate.activityDetails[i];
                             const waitActivityResult: any = waitActivities[j];
                             let waitReasons: string = "";
                             let additionalNotes: string = "";
-                            
+
                             if (waitActivityResult.waitReason) {
                                 waitReasons = `Reason for waiting: ${waitActivityResult.waitReason};\r\n`;
                             }
