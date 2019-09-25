@@ -95,7 +95,6 @@ class ReportGenerationService {
                             detailsTemplate.activity.value = (waitActivityResult.activityType === "visit") ? ACTIVITY_TYPE.TEST : ACTIVITY_TYPE.WAIT_TIME;
                             detailsTemplate.startTime.value = moment(waitActivityResult.startTime).tz(TIMEZONE.LONDON).format("HH:mm:ss");
                             detailsTemplate.finishTime.value = moment(waitActivityResult.endTime).tz(TIMEZONE.LONDON).format("HH:mm:ss");
-                            detailsTemplate.failureAdvisoryItemsQAIComments.value = waitReasons + additionalNotes;
                         }
                         return template.workbook.xlsx.writeBuffer()
                             .then((buffer: Excel.Buffer) => {
