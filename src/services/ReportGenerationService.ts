@@ -77,7 +77,7 @@ class ReportGenerationService {
                             detailsTemplate.expiryDate.value = moment(testType.testExpiryDate).tz(TIMEZONE.LONDON).format("DD/MM/YYYY");
                         }
 
-                        // Populate wait activities in the report
+                       /* // Populate wait activities in the report
                         for (let i = testResults.length, j = 0; i < template.reportTemplate.activityDetails.length && j < waitActivities.length; i++, j++) {
                             console.log(`Populating wait activities details in report`);
                             const detailsTemplate: any = template.reportTemplate.activityDetails[i];
@@ -95,14 +95,15 @@ class ReportGenerationService {
                             detailsTemplate.activity.value = (waitActivityResult.activityType === "visit") ? ACTIVITY_TYPE.TEST : ACTIVITY_TYPE.WAIT_TIME;
                             detailsTemplate.startTime.value = moment(waitActivityResult.startTime).tz(TIMEZONE.LONDON).format("HH:mm:ss");
                             detailsTemplate.finishTime.value = moment(waitActivityResult.endTime).tz(TIMEZONE.LONDON).format("HH:mm:ss");
-                        }
+                        }*/
                         return template.workbook.xlsx.writeBuffer()
                             .then((buffer: Excel.Buffer) => {
                                 return {
                                     // tslint:disable-next-line
                                     fileName: `ATFReport_${moment(activity.startTime).tz(TIMEZONE.LONDON).format("DD-MM-YYYY")}_${moment(activity.startTime).tz(TIMEZONE.LONDON).format("HHmm")}_${activity.testStationPNumber}_${activity.testerName}.xlsx`,
                                     fileBuffer: buffer,
-                                    testResults
+                                    testResults,
+                                    waitActivities
                                 };
                             });
                     });

@@ -12,7 +12,8 @@ export enum ERRORS {
 
 export enum ACTIVITY_TYPE {
     TEST = "Test",
-    WAIT_TIME = "Wait Time"
+    WAIT_TIME = "Wait Time",
+    TIME_NOT_TESTING = "Time not Testing"
 }
 
 export enum TIMEZONE {

@@ -2,13 +2,14 @@ import moment = require("moment-timezone");
 import { ACTIVITY_TYPE, TIMEZONE } from "../assets/enum";
 
 class NotificationData {
+
   /**
    * Generates the activity details for the ATF Report template
    * @param activity - activity that will be added in the email
    * @param testResultsList - list of test results that will be added in the email
    * @return personalization - Array that contains the entries for each activity and test result
    */
-  public generateActivityDetails(visit: any, testResultsList: any) {
+  public generateActivityDetails(visit: any, testResultsList: any, waitActivitiesList: any) {
     const personalization: any = {};
     personalization.testStationPNumber = visit.testStationPNumber;
     personalization.testerName = visit.testerName;
@@ -27,6 +28,14 @@ class NotificationData {
       + `${testResult.testTypes.certificateNumber ? `\n^• Certificate number: ${testResult.testTypes.certificateNumber}` : ""}`
       + `${testResult.testTypes.testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime(testResult.testTypes.testExpiryDate, "date")}` : ""}`
       + `${(index < testResultsList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
+    }
+    console.log(`Populating wait times in atf report, Len: ${waitActivitiesList.length}`);
+    personalization.activityType = ACTIVITY_TYPE.TIME_NOT_TESTING;
+    for (const [index, waitTime] of waitActivitiesList.entries()) {
+      personalization.activityDetails += `^#${this.capitalise(personalization.activityType)}
+      ^• Time: ${this.formatDateAndTime(waitTime.startTime, "time")} - ${this.formatDateAndTime(waitTime.endTime, "time")}
+      ^• Reason: ${waitTime.waitReason}`
+          + `${(index < waitActivitiesList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
     }
     return personalization;
   }

@@ -11,12 +11,14 @@ describe("notificationData", () => {
         const event: any = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/queue-event.json"), "utf8"));
         const visit: any = JSON.parse(event.Records[0].body);
         const testResultsList: any = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/test-results-200-response.json"), "utf8"));
+        const waitActivitiesList: any = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/test-results-200-response.json"), "utf8"));
         const testResultsListMultiTest: any = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/test-results-200-response-multi-test.json"), "utf8"));
         LambdaMockService.populateFunctions();
         context("when parsing the visit and the test results", () => {
             it("should return a correct test stations emails", () => {
                 const testResultsArray = JSON.parse(testResultsList.body);
-                const sendNotificationData = notificationData.generateActivityDetails(visit, testResultsArray);
+                const waitActivitiesArray = JSON.parse(waitActivitiesList.body);
+                const sendNotificationData = notificationData.generateActivityDetails(visit, testResultsArray, waitActivitiesArray);
                 expect(sendNotificationData.testStationPNumber).to.equal(testResultsArray[0].testStationPNumber);
                 expect(sendNotificationData.testerName).to.equal(visit.testerName);
                 expect(sendNotificationData.startTimeDate).to.equal("14/01/2019");
@@ -30,7 +32,8 @@ describe("notificationData", () => {
         context("when parsing the visit and multiple test results", () => {
             it("should return a correct test stations emails with dividers", () => {
                 const testResultsArray = JSON.parse(testResultsListMultiTest.body);
-                const sendNotificationData = notificationData.generateActivityDetails(visit, testResultsArray);
+                const waitActivitiesArray = JSON.parse(waitActivitiesList.body);
+                const sendNotificationData = notificationData.generateActivityDetails(visit, testResultsArray, waitActivitiesArray);
                 expect(sendNotificationData.testStationPNumber).to.equal(testResultsArray[0].testStationPNumber);
                 expect(sendNotificationData.testerName).to.equal(visit.testerName);
                 expect(sendNotificationData.startTimeDate).to.equal("14/01/2019");

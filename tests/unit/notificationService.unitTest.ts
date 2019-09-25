@@ -14,9 +14,11 @@ describe("notification service", () => {
         const event: any = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/queue-event.json"), "utf8"));
         const visit: any = JSON.parse(event.Records[0].body);
         const testResultsList: any = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/test-results-200-response.json"), "utf8"));
+        const waitActivitiesList: any = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/test-results-200-response.json"), "utf8"));
         const testResultsArray = JSON.parse(testResultsList.body);
+        const waitActivitesArray = JSON.parse(waitActivitiesList.body);
         const notificationData: NotificationData = new NotificationData();
-        const sendNotificationData = notificationData.generateActivityDetails(visit, testResultsArray);
+        const sendNotificationData = notificationData.generateActivityDetails(visit, testResultsArray, waitActivitesArray);
 
         context("when sending email with the correct data and emails", () => {
             it("should return a correct response", () => {
