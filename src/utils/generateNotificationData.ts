@@ -27,9 +27,8 @@ class NotificationData {
       ^• Result: ${this.capitalise(testResult.testTypes.testResult)}`
       + `${testResult.testTypes.certificateNumber ? `\n^• Certificate number: ${testResult.testTypes.certificateNumber}` : ""}`
       + `${testResult.testTypes.testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime(testResult.testTypes.testExpiryDate, "date")}` : ""}`
-      + `${(index < testResultsList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
+      + `${(index < (testResultsList.length + waitActivitiesList.length) - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
     }
-    console.log(`Populating wait times in atf report, Len: ${waitActivitiesList.length}`);
     personalization.activityType = ACTIVITY_TYPE.TIME_NOT_TESTING;
     for (const [index, waitTime] of waitActivitiesList.entries()) {
       personalization.activityDetails += `^#${this.capitalise(personalization.activityType)}
