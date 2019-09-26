@@ -11,6 +11,7 @@ class NotificationData {
    */
   public generateActivityDetails(visit: any, testResultsList: any, waitActivitiesList: any) {
     let list : IActivitiesList[] = [];
+    console.log(`Pushing Test activities to the list`);
     for (const [index, testResult] of testResultsList.entries()) {
       const act: IActivitiesList = {
         startTime: testResult.testTypes.testTypeStartTimestamp,
@@ -19,6 +20,8 @@ class NotificationData {
       }
       list.push(act);
     }
+    console.log(`1: List Len : ${list.length}`);
+    console.log(`Pushing Wait activities to the list`);
     for (const [index, waitTime] of waitActivitiesList.entries()) {
       const act: IActivitiesList = {
         startTime: waitTime.startTime,
@@ -27,15 +30,16 @@ class NotificationData {
       }
       list.push(act);
     }
-    list.sort((n1,n2) => {
-      if(n1.startTime > n2.startTime){
-        return 1;
-      }
-      if(n1.startTime > n2.startTime){
-        return -1;
-      }
+    console.log(`2: List Len : ${list.length}`);
+    const sortDateAsc = (date1: any, date2: any) => {
+      const date = new Date(date1.startTime).toISOString();
+      const dateToCompare = new Date(date2.startTime).toISOString();
+      if (date > dateToCompare) { return 1; }
+      if (date < dateToCompare) { return -1; }
       return 0;
-    });
+    };
+    console.log(`Sorting the list`);
+    list.sort(sortDateAsc);
 
     const personalization: any = {};
     personalization.testStationPNumber = visit.testStationPNumber;
