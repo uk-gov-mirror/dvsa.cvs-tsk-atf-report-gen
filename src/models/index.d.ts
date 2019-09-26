@@ -50,4 +50,10 @@ interface IInvokeConfig {
     functions: { testResults: { name: string }, testStations: { name: string; mock: string }, getActivities: { name: string } };
 }
 
-export {IS3Config, IActivity, IInvokeConfig, IMOTConfig};
+interface IActivitiesList {
+    startTime: string,
+    activityType: string,
+    activity: any
+}
+
+export {IS3Config, IActivity, IInvokeConfig, IMOTConfig, IActivitiesList};
