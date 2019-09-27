@@ -45,6 +45,28 @@ interface IActivity {
     notes: string;
 }
 
+interface ITestType {
+    testTypeStartTimestamp: string;
+    testTypeName: string;
+    testResult: string;
+    certificateNumber: string;
+    testExpiryDate: number;
+    testTypeEndTimeStamp: string;
+}
+
+interface ITestResults {
+    testerStaffId: string;
+    vrm: string;
+    testStationPNumber: string;
+    preparerId: string;
+    numberOfSeats: number;
+    testStartTimestamp: string;
+    testEndTimestamp: string;
+    testTypes: ITestType;
+    vin: string;
+    vehicleType: string
+}
+
 interface IInvokeConfig {
     params: { apiVersion: string; endpoint?: string; };
     functions: { testResults: { name: string }, testStations: { name: string; mock: string }, getActivities: { name: string } };
@@ -56,4 +78,4 @@ interface IActivitiesList {
     activity: any
 }
 
-export {IS3Config, IActivity, IInvokeConfig, IMOTConfig, IActivitiesList};
+export {IS3Config, IActivity, IInvokeConfig, IMOTConfig, ITestResults, IActivitiesList};

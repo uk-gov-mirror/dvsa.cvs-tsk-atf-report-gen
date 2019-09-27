@@ -8,6 +8,8 @@ import { NotificationService } from "./NotificationService";
 // @ts-ignore
 import { NotifyClient } from "notifications-node-client";
 import { S3BucketMockService } from "../../tests/models/S3BucketMockService";
+import {IActivitiesList, IActivity, ITestResults} from "../models";
+import {ACTIVITY_TYPE} from "../assets/enum";
 
 @Service()
 class SendATFReport {
@@ -31,13 +33,12 @@ class SendATFReport {
  * @param visit - Data about the current visit
  */
   public sendATFReport(generationServiceResponse: any, visit: any) {
-    const testResultsList = generationServiceResponse.testResults;
-    const waitActivitiesList = generationServiceResponse.waitActivities;
+    const activitiesList = this.computeActivitiesList(generationServiceResponse.testResults, generationServiceResponse.waitActivities);
     return this.s3BucketService.upload(`cvs-atf-reports-${process.env.BUCKET}`, generationServiceResponse.fileName, generationServiceResponse.fileBuffer)
       .then((result: any) => {
         return this.testStationsService.getTestStationEmail(visit.testStationPNumber)
           .then((response: any) => {
-            const sendNotificationData = this.notificationData.generateActivityDetails(visit, testResultsList, waitActivitiesList);
+            const sendNotificationData = this.notificationData.generateActivityDetails(visit, activitiesList);
             return this.notifyService.sendNotification(sendNotificationData, response[0].testStationEmails).then(() => {
               return result;
             }).catch((error: any) => {
@@ -49,6 +50,39 @@ class SendATFReport {
             throw error;
           });
       });
+  }
+
+  private computeActivitiesList(testResultsList: ITestResults[], waitActivitiesList: IActivity[]) {
+    let list : IActivitiesList[] = [];
+    // Adding Test activities to the list
+    for (const [index, testResult] of testResultsList.entries()) {
+      const act: IActivitiesList = {
+        startTime: testResult.testTypes.testTypeStartTimestamp,
+        activityType: ACTIVITY_TYPE.TEST,
+        activity: testResult
+      }
+      list.push(act);
+    }
+    // Adding Wait activities to the list
+    for (const [index, waitTime] of waitActivitiesList.entries()) {
+      const act: IActivitiesList = {
+        startTime: waitTime.startTime,
+        activityType: ACTIVITY_TYPE.TIME_NOT_TESTING,
+        activity: waitTime
+      }
+      list.push(act);
+    }
+    // Sorting the list by StartTime
+    const sortDateAsc = (date1: any, date2: any) => {
+      const date = new Date(date1.startTime).toISOString();
+      const dateToCompare = new Date(date2.startTime).toISOString();
+      if (date > dateToCompare) { return 1; }
+      if (date < dateToCompare) { return -1; }
+      return 0;
+    };
+    console.log(`Sorting the list`);
+    list.sort(sortDateAsc);
+    return list;
   }
 }
 

@@ -1,6 +1,6 @@
 import moment = require("moment-timezone");
 import { ACTIVITY_TYPE, TIMEZONE } from "../assets/enum";
-import { IActivitiesList } from "../models";
+import {IActivitiesList, ITestResults} from "../models";
 
 class NotificationData {
   /**
@@ -9,38 +9,8 @@ class NotificationData {
    * @param testResultsList - list of test results that will be added in the email
    * @return personalization - Array that contains the entries for each activity and test result
    */
-  public generateActivityDetails(visit: any, testResultsList: any, waitActivitiesList: any) {
-    let list : IActivitiesList[] = [];
-    console.log(`Pushing Test activities to the list`);
-    for (const [index, testResult] of testResultsList.entries()) {
-      const act: IActivitiesList = {
-        startTime: testResult.testTypes.testTypeStartTimestamp,
-        activityType: ACTIVITY_TYPE.TEST,
-        activity: testResult
-      }
-      list.push(act);
-    }
-    console.log(`1: List Len : ${list.length}`);
-    console.log(`Pushing Wait activities to the list`);
-    for (const [index, waitTime] of waitActivitiesList.entries()) {
-      const act: IActivitiesList = {
-        startTime: waitTime.startTime,
-        activityType: ACTIVITY_TYPE.TIME_NOT_TESTING,
-        activity: waitTime
-      }
-      list.push(act);
-    }
-    console.log(`2: List Len : ${list.length}`);
-    const sortDateAsc = (date1: any, date2: any) => {
-      const date = new Date(date1.startTime).toISOString();
-      const dateToCompare = new Date(date2.startTime).toISOString();
-      if (date > dateToCompare) { return 1; }
-      if (date < dateToCompare) { return -1; }
-      return 0;
-    };
-    console.log(`Sorting the list`);
-    list.sort(sortDateAsc);
-
+  public generateActivityDetails(visit: any, activitiesList: IActivitiesList[]) {
+    //Populating the list details.
     const personalization: any = {};
     personalization.testStationPNumber = visit.testStationPNumber;
     personalization.testerName = visit.testerName;
@@ -49,10 +19,8 @@ class NotificationData {
     personalization.endTime = this.formatDateAndTime(visit.endTime, "time");
     personalization.testStationName = visit.testStationName;
     personalization.activityDetails = "";
-    //personalization.activityType = (visit.activityType === "visit") ? ACTIVITY_TYPE.TEST : ACTIVITY_TYPE.WAIT_TIME;
-    for (const [index, act] of list.entries()) {
+    for (const [index, act] of activitiesList.entries()) {
       if(act.activityType === ACTIVITY_TYPE.TEST) {
-        console.log(`Populating test activity`);
         personalization.activityDetails += `^#${this.capitalise(ACTIVITY_TYPE.TEST)} (${act.activity.vrm})
       ^• Time: ${this.formatDateAndTime(act.activity.testTypes.testTypeStartTimestamp, "time")} - ${this.formatDateAndTime(act.activity.testTypes.testTypeEndTimeStamp, "time")}
       ^• Test description: ${act.activity.testTypes.testTypeName}
@@ -60,35 +28,15 @@ class NotificationData {
       ^• Result: ${this.capitalise(act.activity.testTypes.testResult)}`
             + `${act.activity.testTypes.certificateNumber ? `\n^• Certificate number: ${act.activity.testTypes.certificateNumber}` : ""}`
             + `${act.activity.testTypes.testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime(act.activity.testTypes.testExpiryDate, "date")}` : ""}`
-            + `${(index < list.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
+            + `${(index < activitiesList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
       }
       if(act.activityType === ACTIVITY_TYPE.TIME_NOT_TESTING) {
-        console.log(`Populating wait activity`);
         personalization.activityDetails += `^#${this.capitalise(ACTIVITY_TYPE.TIME_NOT_TESTING)}
       ^• Time: ${this.formatDateAndTime(act.activity.startTime, "time")} - ${this.formatDateAndTime(act.activity.endTime, "time")}
       ^• Reason: ${act.activity.waitReason}`
-            + `${(index < list.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
+            + `${(index < activitiesList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
       }
     }
-
-/*
-    for (const [index, testResult] of testResultsList.entries()) {
-      personalization.activityDetails += `^#${this.capitalise(personalization.activityType)} (${testResult.vrm})
-      ^• Time: ${this.formatDateAndTime(testResult.testTypes.testTypeStartTimestamp, "time")} - ${this.formatDateAndTime(testResult.testTypes.testTypeEndTimeStamp, "time")}
-      ^• Test description: ${testResult.testTypes.testTypeName}
-      ^• Axles / Seats: ${testResult.numberOfSeats}
-      ^• Result: ${this.capitalise(testResult.testTypes.testResult)}`
-      + `${testResult.testTypes.certificateNumber ? `\n^• Certificate number: ${testResult.testTypes.certificateNumber}` : ""}`
-      + `${testResult.testTypes.testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime(testResult.testTypes.testExpiryDate, "date")}` : ""}`
-      + `${(index < (testResultsList.length + waitActivitiesList.length) - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
-    }
-    personalization.activityType = ACTIVITY_TYPE.TIME_NOT_TESTING;
-    for (const [index, waitTime] of waitActivitiesList.entries()) {
-      personalization.activityDetails += `^#${this.capitalise(personalization.activityType)}
-      ^• Time: ${this.formatDateAndTime(waitTime.startTime, "time")} - ${this.formatDateAndTime(waitTime.endTime, "time")}
-      ^• Reason: ${waitTime.waitReason}`
-          + `${(index < waitActivitiesList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
-    }*/
     return personalization;
   }
 
