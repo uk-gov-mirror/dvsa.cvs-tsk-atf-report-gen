@@ -6,19 +6,21 @@ import { NotifyClient } from "notifications-node-client";
 import * as fs from "fs";
 import * as path from "path";
 import { NotificationData } from "../../src/utils/generateNotificationData";
+import {SendATFReport} from "../../src/services/SendATFReport";
 
 describe("notification service", () => {
     context("send email", () => {
         const notifyClient = new NotifyClient(Configuration.getInstance().getGovNotifyConfig().api_key);
         const notifyService: NotificationService = new NotificationService(notifyClient);
+        const sendAtfReport: SendATFReport = new SendATFReport();
         const event: any = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/queue-event.json"), "utf8"));
         const visit: any = JSON.parse(event.Records[0].body);
         const testResultsList: any = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/test-results-200-response.json"), "utf8"));
-        const waitActivitiesList: any = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/test-results-200-response.json"), "utf8"));
+        const waitActivitiesList: any = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/wait-time-response.json"), "utf8"));
         const testResultsArray = JSON.parse(testResultsList.body);
         const waitActivitesArray = JSON.parse(waitActivitiesList.body);
         const notificationData: NotificationData = new NotificationData();
-        const sendNotificationData = notificationData.generateActivityDetails(visit, testResultsArray, waitActivitesArray);
+        const sendNotificationData = notificationData.generateActivityDetails(visit, sendAtfReport.computeActivitiesList(testResultsArray, waitActivitesArray));
 
         context("when sending email with the correct data and emails", () => {
             it("should return a correct response", () => {

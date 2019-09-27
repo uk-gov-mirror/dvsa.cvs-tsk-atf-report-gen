@@ -52,7 +52,7 @@ class SendATFReport {
       });
   }
 
-  private computeActivitiesList(testResultsList: ITestResults[], waitActivitiesList: IActivity[]) {
+  public computeActivitiesList(testResultsList: ITestResults[], waitActivitiesList: IActivity[]) {
     let list : IActivitiesList[] = [];
     // Adding Test activities to the list
     for (const [index, testResult] of testResultsList.entries()) {
