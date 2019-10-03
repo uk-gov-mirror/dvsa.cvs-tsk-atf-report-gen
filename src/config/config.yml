@@ -11,7 +11,8 @@ invoke:
           name: cvs-svc-test-stations
           mock: tests/resources/test-stations-200-response.json
       getActivities:
-        name: cvs-svc-activities
+          name: cvs-svc-activities
+          mock: tests/resources/wait-time-response.json
   remote:
     params:
       apiVersion: 2015-03-31
@@ -21,7 +22,7 @@ invoke:
       testStations:
           name: test-stations-${BRANCH}
       getActivities:
-        name: activities-${BRANCH}
+          name: activities-${BRANCH}
 s3:
   local:
     endpoint: http://localhost:7000

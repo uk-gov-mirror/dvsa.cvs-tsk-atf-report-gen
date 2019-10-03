@@ -34,8 +34,7 @@ describe("notificationData", () => {
         context("when parsing the visit and multiple test results", () => {
             it("should return a correct test stations emails with dividers", () => {
                 const testResultsArray = JSON.parse(testResultsListMultiTest.body);
-                const waitActivitiesArray = JSON.parse(waitActivitiesList.body);
-                const sendNotificationData = notificationData.generateActivityDetails(visit, sendAtfReport.computeActivitiesList(testResultsArray, waitActivitiesArray));
+                const sendNotificationData = notificationData.generateActivityDetails(visit, testResultsArray);
                 expect(sendNotificationData.testStationPNumber).to.equal(testResultsArray[0].testStationPNumber);
                 expect(sendNotificationData.testerName).to.equal(visit.testerName);
                 expect(sendNotificationData.startTimeDate).to.equal("14/01/2019");

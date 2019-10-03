@@ -20,6 +20,7 @@ describe("sendATFReport", () => {
         endTime: "2019-01-14T15:36:33.987Z"
       };
       const generationServiceResponse = {
+          waitActivities:[],
         testResults:
           [ { testerStaffId: "1",
             vrm: "JY58FPP",
