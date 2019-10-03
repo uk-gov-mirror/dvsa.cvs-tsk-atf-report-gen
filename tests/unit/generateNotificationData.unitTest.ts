@@ -45,6 +45,9 @@ describe("notificationData", () => {
                 expect(countInstances(sendNotificationData.activityDetails,"---")).to.equal(2);
             });
         });
+
+        // TODO Add tests to verify the waitTime fields for "Time not Testing" activity added in ATF report.
+        // Verify for activityType, startTime, endTime, waitReason values.
     });
 
 
