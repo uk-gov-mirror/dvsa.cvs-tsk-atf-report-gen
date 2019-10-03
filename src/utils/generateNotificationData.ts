@@ -19,21 +19,21 @@ class NotificationData {
     personalization.endTime = this.formatDateAndTime(visit.endTime, "time");
     personalization.testStationName = visit.testStationName;
     personalization.activityDetails = "";
-    for (const [index, act] of activitiesList.entries()) {
-      if(act.activityType === ACTIVITY_TYPE.TEST) {
-        personalization.activityDetails += `^#${this.capitalise(ACTIVITY_TYPE.TEST)} (${act.activity.vrm})
-      ^• Time: ${this.formatDateAndTime(act.activity.testTypes.testTypeStartTimestamp, "time")} - ${this.formatDateAndTime(act.activity.testTypes.testTypeEndTimeStamp, "time")}
-      ^• Test description: ${act.activity.testTypes.testTypeName}
-      ^• Axles / Seats: ${act.activity.numberOfSeats}
-      ^• Result: ${this.capitalise(act.activity.testTypes.testResult)}`
-            + `${act.activity.testTypes.certificateNumber ? `\n^• Certificate number: ${act.activity.testTypes.certificateNumber}` : ""}`
-            + `${act.activity.testTypes.testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime(act.activity.testTypes.testExpiryDate, "date")}` : ""}`
+    for (const [index, event] of activitiesList.entries()) {
+      if(event.activityType === ACTIVITY_TYPE.TEST) {
+        personalization.activityDetails += `^#${this.capitalise(ACTIVITY_TYPE.TEST)} (${event.activity.vrm})
+      ^• Time: ${this.formatDateAndTime(event.activity.testTypes.testTypeStartTimestamp, "time")} - ${this.formatDateAndTime(event.activity.testTypes.testTypeEndTimeStamp, "time")}
+      ^• Test description: ${event.activity.testTypes.testTypeName}
+      ^• Axles / Seats: ${event.activity.numberOfSeats}
+      ^• Result: ${this.capitalise(event.activity.testTypes.testResult)}`
+            + `${event.activity.testTypes.certificateNumber ? `\n^• Certificate number: ${event.activity.testTypes.certificateNumber}` : ""}`
+            + `${event.activity.testTypes.testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime(event.activity.testTypes.testExpiryDate, "date")}` : ""}`
             + `${(index < activitiesList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
       }
-      if(act.activityType === ACTIVITY_TYPE.TIME_NOT_TESTING) {
+      if(event.activityType === ACTIVITY_TYPE.TIME_NOT_TESTING) {
         personalization.activityDetails += `^#${this.capitalise(ACTIVITY_TYPE.TIME_NOT_TESTING)}
-      ^• Time: ${this.formatDateAndTime(act.activity.startTime, "time")} - ${this.formatDateAndTime(act.activity.endTime, "time")}
-      ^• Reason: ${act.activity.waitReason}`
+      ^• Time: ${this.formatDateAndTime(event.activity.startTime, "time")} - ${this.formatDateAndTime(event.activity.endTime, "time")}
+      ^• Reason: ${event.activity.waitReason}`
             + `${(index < activitiesList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
       }
     }

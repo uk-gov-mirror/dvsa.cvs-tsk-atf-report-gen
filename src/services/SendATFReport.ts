@@ -33,6 +33,7 @@ class SendATFReport {
  * @param visit - Data about the current visit
  */
   public sendATFReport(generationServiceResponse: any, visit: any) {
+    // Add testResults and waitActivities in a common list and sort it by startTime
     const activitiesList = this.computeActivitiesList(generationServiceResponse.testResults, generationServiceResponse.waitActivities);
     return this.s3BucketService.upload(`cvs-atf-reports-${process.env.BUCKET}`, generationServiceResponse.fileName, generationServiceResponse.fileBuffer)
       .then((result: any) => {
@@ -52,10 +53,15 @@ class SendATFReport {
       });
   }
 
+  /* Method to collate testResults and waitActivities into a common list
+   * and then sort them on startTime to display the activities in a sequence.
+   * @param testResultsList: testResults list
+   * @param waitActivitiesList: wait activities list
+   */
   public computeActivitiesList(testResultsList: ITestResults[], waitActivitiesList: IActivity[]) {
     let list : IActivitiesList[] = [];
     // Adding Test activities to the list
-    for (const [index, testResult] of testResultsList.entries()) {
+    for (const testResult of testResultsList) {
       const act: IActivitiesList = {
         startTime: testResult.testTypes.testTypeStartTimestamp,
         activityType: ACTIVITY_TYPE.TEST,
@@ -64,7 +70,7 @@ class SendATFReport {
       list.push(act);
     }
     // Adding Wait activities to the list
-    for (const [index, waitTime] of waitActivitiesList.entries()) {
+    for (const waitTime of waitActivitiesList) {
       const act: IActivitiesList = {
         startTime: waitTime.startTime,
         activityType: ACTIVITY_TYPE.TIME_NOT_TESTING,
@@ -80,7 +86,7 @@ class SendATFReport {
       if (date < dateToCompare) { return -1; }
       return 0;
     };
-    console.log(`Sorting the list`);
+    // Sort the list by startTime
     list.sort(sortDateAsc);
     return list;
   }
