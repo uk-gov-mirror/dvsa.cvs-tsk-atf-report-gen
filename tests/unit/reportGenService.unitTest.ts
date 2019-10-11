@@ -108,7 +108,10 @@ describe("ReportGenerationService", () => {
 
                     expect(reportSheet.getCell("C24").value).to.equal("Activity");
                     // tslint:disable-next-line
-                    expect(reportSheet.getCell("C25").value).to.be.null;
+
+                  let value = reportSheet.getCell("C25").value;
+                  console.log("C25", value);
+                  expect(value).to.be.null;
                 });
             });
         });
