@@ -92,27 +92,29 @@ describe("ReportGenerationService", () => {
                     });
             });
 
-            context("and testResults returns cancelled tests", ()=> {
-                it("should generate an empty report", async () => {
-                    // TestResultsService.prototype.getTestResults = jest.fn().mockImplementation(() => {return cancelledTest});
-                    LambdaMockService.changeResponse("cvs-svc-test-results", "tests/resources/cancelled-test-result.json");
-
-                    const output = await reportGenerationService.generateATFReport(activity);
-                    const workbook = new Excel.Workbook();
-                    const stream = new Duplex();
-                    stream.push(output.fileBuffer); // Convert the incoming file to a readable stream
-                    stream.push(null);
-
-                    const excelFile = await workbook.xlsx.read(stream);
-                    const reportSheet: Excel.Worksheet = excelFile.getWorksheet(1);
-
-                    expect(reportSheet.getCell("C24").value).to.equal("Activity");
-                    // tslint:disable-next-line
-
-                  let value = reportSheet.getCell("C25").value;
-                  console.log("C25", value);
-                  expect(value).to.be.null;
-                });
-            });
+            // Test disabled as Test Results should no longer return cancelled tests (CVSB-7623)
+            //
+            // context("and testResults returns cancelled tests", ()=> {
+            //     it("should generate an empty report", async () => {
+            //         // TestResultsService.prototype.getTestResults = jest.fn().mockImplementation(() => {return cancelledTest});
+            //         LambdaMockService.changeResponse("cvs-svc-test-results", "tests/resources/cancelled-test-result.json");
+            //
+            //         const output = await reportGenerationService.generateATFReport(activity);
+            //         const workbook = new Excel.Workbook();
+            //         const stream = new Duplex();
+            //         stream.push(output.fileBuffer); // Convert the incoming file to a readable stream
+            //         stream.push(null);
+            //
+            //         const excelFile = await workbook.xlsx.read(stream);
+            //         const reportSheet: Excel.Worksheet = excelFile.getWorksheet(1);
+            //
+            //         expect(reportSheet.getCell("C24").value).to.equal("Activity");
+            //         // tslint:disable-next-line
+            //
+            //       let value = reportSheet.getCell("C25").value;
+            //       console.log("C25", value);
+            //       expect(value).to.be.null;
+            //     });
+            // });
         });
     });
