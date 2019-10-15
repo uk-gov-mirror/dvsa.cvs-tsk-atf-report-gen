@@ -93,7 +93,7 @@ describe("ReportGenerationService", () => {
             context("and testResults returns HGVs and TRLs", () => {
                 it("should return a valid xlsx file as buffer with trailerId populated for trl vehicles and noOfAxles populated for hgv and trl vehicles", async () => {
                     // TestResultsService.prototype.getTestResults = jest.fn().mockImplementation(() => {return cancelledTest});
-                    LambdaMockService.changeResponse("cvs-svc-test-results", "tests/resources/cancelled-test-result.json");
+                    LambdaMockService.changeResponse("cvs-svc-test-results", "tests/resources/hgv-trl-test-results.json");
 
                     const output = await reportGenerationService.generateATFReport(activity);
                     const workbook = new Excel.Workbook();
