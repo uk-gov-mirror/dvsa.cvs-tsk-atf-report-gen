@@ -90,8 +90,8 @@ describe("ReportGenerationService", () => {
                     });
             });
 
-            context("and testResults returns cancelled tests", ()=> {
-                it("should generate an empty report", async () => {
+            context("and testResults returns HGVs and TRLs", () => {
+                it("should return a valid xlsx file as buffer with trailerId populated for trl vehicles and noOfAxles populated for hgv and trl vehicles", async () => {
                     // TestResultsService.prototype.getTestResults = jest.fn().mockImplementation(() => {return cancelledTest});
                     LambdaMockService.changeResponse("cvs-svc-test-results", "tests/resources/cancelled-test-result.json");
 
@@ -104,9 +104,10 @@ describe("ReportGenerationService", () => {
                     const excelFile = await workbook.xlsx.read(stream);
                     const reportSheet: Excel.Worksheet = excelFile.getWorksheet(1);
 
-                    expect(reportSheet.getCell("C24").value).to.equal("Activity");
-                    // tslint:disable-next-line
-                    expect(reportSheet.getCell("C25").value).to.be.null;
+                    expect(reportSheet.getCell("H25").value).to.equal(2);
+                    expect(reportSheet.getCell("H26").value).to.equal(5);
+                    expect(reportSheet.getCell("F25").value).to.equal("JY58FPP");
+                    expect(reportSheet.getCell("E26").value).to.equal("12345");
                 });
             });
         });
