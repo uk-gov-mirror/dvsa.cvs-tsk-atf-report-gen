@@ -19,10 +19,11 @@ class NotificationData {
     personalization.activityDetails = "";
     personalization.activityType = (visit.activityType === "visit") ? ACTIVITY_TYPE.TEST : ACTIVITY_TYPE.WAIT_TIME;
     for (const [index, testResult] of testResultsList.entries()) {
+      const axlesSeats = (testResult.vehicleType === "psv") ? testResult.numberOfSeats : testResult.noOfAxles;
       personalization.activityDetails += `^#${this.capitalise(personalization.activityType)} (${testResult.vrm})
       ^• Time: ${this.formatDateAndTime(testResult.testTypes.testTypeStartTimestamp, "time")} - ${this.formatDateAndTime(testResult.testTypes.testTypeEndTimeStamp, "time")}
       ^• Test description: ${testResult.testTypes.testTypeName}
-      ^• Axles / Seats: ${testResult.numberOfSeats}
+      ^• Axles / Seats: ${axlesSeats}
       ^• Result: ${this.capitalise(testResult.testTypes.testResult)}`
       + `${testResult.testTypes.certificateNumber ? `\n^• Certificate number: ${testResult.testTypes.certificateNumber}` : ""}`
       + `${testResult.testTypes.testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime(testResult.testTypes.testExpiryDate, "date")}` : ""}`

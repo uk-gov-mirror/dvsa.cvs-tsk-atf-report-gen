@@ -4,7 +4,7 @@ import * as path from "path";
 import { Service } from "../models/injector/ServiceDecorator";
 import { TestResultsService } from "./TestResultsService";
 import moment = require("moment-timezone");
-import {ACTIVITY_TYPE, ERRORS, STATUSES, TIMEZONE} from "../assets/enum";
+import { ACTIVITY_TYPE, ERRORS, STATUSES, TIMEZONE } from "../assets/enum";
 import { HTTPError } from "../models/HTTPError";
 
 @Service()
