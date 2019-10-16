@@ -20,6 +20,9 @@ class NotificationData {
     personalization.activityType = (visit.activityType === "visit") ? ACTIVITY_TYPE.TEST : ACTIVITY_TYPE.WAIT_TIME;
     for (const [index, testResult] of testResultsList.entries()) {
       const axlesSeats = (testResult.vehicleType === "psv") ? testResult.numberOfSeats : testResult.noOfAxles;
+      console.log("NUMBER_OF_SEATS", testResult.numberOfSeats);
+      console.log("NUMBER_OF_AXLES", testResult.noOfAxles);
+      console.log("AXLE_SEATS", axlesSeats);
       personalization.activityDetails += `^#${this.capitalise(personalization.activityType)} (${testResult.vrm})
       ^• Time: ${this.formatDateAndTime(testResult.testTypes.testTypeStartTimestamp, "time")} - ${this.formatDateAndTime(testResult.testTypes.testTypeEndTimeStamp, "time")}
       ^• Test description: ${testResult.testTypes.testTypeName}
@@ -29,6 +32,7 @@ class NotificationData {
       + `${testResult.testTypes.testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime(testResult.testTypes.testExpiryDate, "date")}` : ""}`
       + `${(index < testResultsList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
     }
+    console.log("PERSONALIZATION ->", personalization);
     return personalization;
   }
 

@@ -28,6 +28,7 @@ class ReportGenerationService {
             testStatus: STATUSES.SUBMITTED
         })
         .then((testResults: any) => {
+            console.log("TEST_RESULTS_AFTER FETCHING FROM DB ->", testResults);
             // Fetch and populate the ATF template
             return this.fetchATFTemplate(testResults.length)
             .then((template: { workbook: Excel.Workbook, reportTemplate: any} ) => {
