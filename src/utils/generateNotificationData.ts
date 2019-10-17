@@ -24,6 +24,8 @@ class NotificationData {
       console.log("NUMBER_OF_SEATS", testResult.numberOfSeats);
       console.log("NUMBER_OF_AXLES", testResult.noOfAxles);
       console.log("AXLE_SEATS", axlesSeats);
+      console.log("ONE_OF_THE_TIMESTAMPS: ", testResult.testTypes.testTypeStartTimestamp + " " + testResult.testTypes.testTypeEndTimeStamp);
+      console.log("ONE_OF_THE_FORMATED_TIMESTAMPS: ",this.formatDateAndTime(testResult.testTypes.testTypeStartTimestamp, "time") + " " + this.formatDateAndTime(testResult.testTypes.testTypeEndTimeStamp, "time"));
       personalization.activityDetails += `^#${this.capitalise(personalization.activityType)} (${vrmTrailerId})
       ^• Time: ${this.formatDateAndTime(testResult.testTypes.testTypeStartTimestamp, "time")} - ${this.formatDateAndTime(testResult.testTypes.testTypeEndTimeStamp, "time")}
       ^• Test description: ${testResult.testTypes.testTypeName}
