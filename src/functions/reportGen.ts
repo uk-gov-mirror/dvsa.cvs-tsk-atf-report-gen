@@ -26,7 +26,6 @@ const reportGen: Handler = async (event: any, context?: Context, callback?: Call
         const visit: any = JSON.parse(record.body);
         const retroUploadPromise = reportService.generateATFReport(visit)
         .then((generationServiceResponse: { fileName: string, fileBuffer: Buffer, testResults: any}) => {
-            console.log("GENERATION_SERVICE_RESPONSE_TEST_RESULTS ->", JSON.stringify(generationServiceResponse.testResults));
             return sendATFReport.sendATFReport(generationServiceResponse, visit);
         })
         .catch((error: any) => {

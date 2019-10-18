@@ -36,9 +36,7 @@ class SendATFReport {
       .then((result: any) => {
         return this.testStationsService.getTestStationEmail(visit.testStationPNumber)
           .then((response: any) => {
-            console.log("TEST_RESULTS_LIST ->", JSON.stringify(testResultsList));
             const sendNotificationData = this.notificationData.generateActivityDetails(visit, testResultsList);
-            console.log("SEND_NOTIFICATION_DATA ->", sendNotificationData);
             return this.notifyService.sendNotification(sendNotificationData, response[0].testStationEmails).then(() => {
               return result;
             }).catch((error: any) => {

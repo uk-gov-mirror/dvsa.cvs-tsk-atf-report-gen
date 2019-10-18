@@ -21,11 +21,6 @@ class NotificationData {
     for (const [index, testResult] of testResultsList.entries()) {
       const axlesSeats = (testResult.vehicleType === "psv") ? testResult.numberOfSeats : testResult.noOfAxles;
       const vrmTrailerId = (testResult.vehicleType === "trl") ? testResult.trailerId : testResult.vrm;
-      console.log("NUMBER_OF_SEATS", testResult.numberOfSeats);
-      console.log("NUMBER_OF_AXLES", testResult.noOfAxles);
-      console.log("AXLE_SEATS", axlesSeats);
-      console.log("ONE_OF_THE_TIMESTAMPS: ", testResult.testTypes.testTypeStartTimestamp + " " + testResult.testTypes.testTypeEndTimeStamp);
-      console.log("ONE_OF_THE_FORMATED_TIMESTAMPS: ",this.formatDateAndTime(testResult.testTypes.testTypeStartTimestamp, "time") + " " + this.formatDateAndTime(testResult.testTypes.testTypeEndTimestamp, "time"));
       personalization.activityDetails += `^#${this.capitalise(personalization.activityType)} (${vrmTrailerId})
       ^• Time: ${this.formatDateAndTime(testResult.testTypes.testTypeStartTimestamp, "time")} - ${this.formatDateAndTime(testResult.testTypes.testTypeEndTimestamp, "time")}
       ^• Test description: ${testResult.testTypes.testTypeName}
@@ -35,7 +30,6 @@ class NotificationData {
       + `${testResult.testTypes.testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime(testResult.testTypes.testExpiryDate, "date")}` : ""}`
       + `${(index < testResultsList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
     }
-    console.log("PERSONALIZATION ->", personalization);
     return personalization;
   }
 
