@@ -1,5 +1,5 @@
 import moment = require("moment-timezone");
-import { ACTIVITY_TYPE, TIMEZONE } from "../assets/enum";
+import {ACTIVITY_TYPE, TIMEZONE, VEHICLE_TYPES} from "../assets/enum";
 
 class NotificationData {
   /**
@@ -19,8 +19,8 @@ class NotificationData {
     personalization.activityDetails = "";
     personalization.activityType = (visit.activityType === "visit") ? ACTIVITY_TYPE.TEST : ACTIVITY_TYPE.WAIT_TIME;
     for (const [index, testResult] of testResultsList.entries()) {
-      const axlesSeats = (testResult.vehicleType === "psv") ? testResult.numberOfSeats : testResult.noOfAxles;
-      const vrmTrailerId = (testResult.vehicleType === "trl") ? testResult.trailerId : testResult.vrm;
+      const axlesSeats = (testResult.vehicleType === VEHICLE_TYPES.PSV) ? testResult.numberOfSeats : testResult.noOfAxles;
+      const vrmTrailerId = (testResult.vehicleType === VEHICLE_TYPES.TRL) ? testResult.trailerId : testResult.vrm;
       personalization.activityDetails += `^#${this.capitalise(personalization.activityType)} (${vrmTrailerId})
       ^• Time: ${this.formatDateAndTime(testResult.testTypes.testTypeStartTimestamp, "time")} - ${this.formatDateAndTime(testResult.testTypes.testTypeEndTimestamp, "time")}
       ^• Test description: ${testResult.testTypes.testTypeName}

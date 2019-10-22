@@ -4,7 +4,7 @@ import * as path from "path";
 import { Service } from "../models/injector/ServiceDecorator";
 import { TestResultsService } from "./TestResultsService";
 import moment = require("moment-timezone");
-import { ACTIVITY_TYPE, ERRORS, STATUSES, TIMEZONE } from "../assets/enum";
+import { ACTIVITY_TYPE, ERRORS, STATUSES, TIMEZONE, VEHICLE_TYPES } from "../assets/enum";
 import { HTTPError } from "../models/HTTPError";
 
 @Service()
@@ -54,9 +54,9 @@ class ReportGenerationService {
                     detailsTemplate.activity.value = (activity.activityType === "visit") ? ACTIVITY_TYPE.TEST : ACTIVITY_TYPE.WAIT_TIME;
                     detailsTemplate.startTime.value = moment(testResult.testStartTimestamp).tz(TIMEZONE.LONDON).format("HH:mm:ss");
                     detailsTemplate.finishTime.value = moment(testResult.testEndTimestamp).tz(TIMEZONE.LONDON).format("HH:mm:ss");
-                    detailsTemplate.vrm.value = (testResult.vehicleType === "trl") ? testResult.trailerId : testResult.vrm;
+                    detailsTemplate.vrm.value = (testResult.vehicleType === VEHICLE_TYPES.TRL) ? testResult.trailerId : testResult.vrm;
                     detailsTemplate.testDescription.value = testType.testTypeName;
-                    detailsTemplate.seatsAndAxles.value = (testResult.vehicleType === "psv") ? testResult.numberOfSeats : testResult.noOfAxles ;
+                    detailsTemplate.seatsAndAxles.value = (testResult.vehicleType === VEHICLE_TYPES.PSV) ? testResult.numberOfSeats : testResult.noOfAxles ;
                     detailsTemplate.result.value = testType.testResult;
                     detailsTemplate.certificateNumber.value = testType.certificateNumber;
                     detailsTemplate.expiryDate.value = moment(testType.testExpiryDate).tz(TIMEZONE.LONDON).format("DD/MM/YYYY");
