@@ -29,4 +29,4 @@ class NotifyClientMock {
     }
 }
 
-export {NotifyClientMock};
+export { NotifyClientMock };

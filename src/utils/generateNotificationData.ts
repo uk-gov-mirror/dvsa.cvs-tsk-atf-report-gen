@@ -1,5 +1,6 @@
 import moment = require("moment-timezone");
-import {ACTIVITY_TYPE, TIMEZONE, VEHICLE_TYPES} from "../assets/enum";
+import { ACTIVITY_TYPE, TIMEZONE, VEHICLE_TYPES } from "../assets/enum";
+import { IActivitiesList, ITestResults } from "../models";
 
 class NotificationData {
   /**
@@ -8,7 +9,8 @@ class NotificationData {
    * @param testResultsList - list of test results that will be added in the email
    * @return personalization - Array that contains the entries for each activity and test result
    */
-  public generateActivityDetails(visit: any, testResultsList: any) {
+  public generateActivityDetails(visit: any, activitiesList: IActivitiesList[]) {
+    // Populating the list details.
     const personalization: any = {};
     personalization.testStationPNumber = visit.testStationPNumber;
     personalization.testerName = visit.testerName;
@@ -17,18 +19,25 @@ class NotificationData {
     personalization.endTime = this.formatDateAndTime(visit.endTime, "time");
     personalization.testStationName = visit.testStationName;
     personalization.activityDetails = "";
-    personalization.activityType = (visit.activityType === "visit") ? ACTIVITY_TYPE.TEST : ACTIVITY_TYPE.WAIT_TIME;
-    for (const [index, testResult] of testResultsList.entries()) {
-      const axlesSeats = (testResult.vehicleType === VEHICLE_TYPES.PSV) ? testResult.numberOfSeats : testResult.noOfAxles;
-      const vrmTrailerId = (testResult.vehicleType === VEHICLE_TYPES.TRL) ? testResult.trailerId : testResult.vrm;
-      personalization.activityDetails += `^#${this.capitalise(personalization.activityType)} (${vrmTrailerId})
-      ^• Time: ${this.formatDateAndTime(testResult.testTypes.testTypeStartTimestamp, "time")} - ${this.formatDateAndTime(testResult.testTypes.testTypeEndTimestamp, "time")}
-      ^• Test description: ${testResult.testTypes.testTypeName}
+    for (const [index, event] of activitiesList.entries()) {
+      if(event.activityType === ACTIVITY_TYPE.TEST) {
+        const axlesSeats = (event.activity.vehicleType === VEHICLE_TYPES.PSV) ? event.activity.numberOfSeats : event.activity.noOfAxles;
+        const vrmTrailerId = (event.activity.vehicleType === VEHICLE_TYPES.TRL) ? event.activity.trailerId : event.activity.vrm;
+        personalization.activityDetails += `^#${this.capitalise(personalization.activityType)} (${vrmTrailerId})
+      ^• Time: ${this.formatDateAndTime(event.activity.testTypes.testTypeStartTimestamp, "time")} - ${this.formatDateAndTime(event.activity.testTypes.testTypeEndTimeStamp, "time")}
+      ^• Test description: ${event.activity.testTypes.testTypeName}
       ^• Axles / Seats: ${axlesSeats}
-      ^• Result: ${this.capitalise(testResult.testTypes.testResult)}`
-      + `${testResult.testTypes.certificateNumber ? `\n^• Certificate number: ${testResult.testTypes.certificateNumber}` : ""}`
-      + `${testResult.testTypes.testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime(testResult.testTypes.testExpiryDate, "date")}` : ""}`
-      + `${(index < testResultsList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
+      ^• Result: ${this.capitalise(event.activity.testTypes.testResult)}`
+          + `${event.activity.testTypes.certificateNumber ? `\n^• Certificate number: ${event.activity.testTypes.certificateNumber}` : ""}`
+          + `${event.activity.testTypes.testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime(event.activity.testTypes.testExpiryDate, "date")}` : ""}`
+          + `${(index < activitiesList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
+      }
+      if(event.activityType === ACTIVITY_TYPE.TIME_NOT_TESTING) {
+        personalization.activityDetails += `^#${this.capitalise(ACTIVITY_TYPE.TIME_NOT_TESTING)}
+      ^• Time: ${this.formatDateAndTime(event.activity.startTime, "time")} - ${this.formatDateAndTime(event.activity.endTime, "time")}
+      ^• Reason: ${event.activity.waitReason}`
+          + `${(index < activitiesList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
+      }
     }
     return personalization;
   }
