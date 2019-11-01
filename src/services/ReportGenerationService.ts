@@ -6,13 +6,16 @@ import { TestResultsService } from "./TestResultsService";
 import moment = require("moment-timezone");
 import { ACTIVITY_TYPE, ERRORS, STATUSES, TIMEZONE, VEHICLE_TYPES } from "../assets/enum";
 import { HTTPError } from "../models/HTTPError";
+import { ActivitiesService } from "./ActivitiesService";
 
 @Service()
 class ReportGenerationService {
     private readonly testResultsService: TestResultsService;
+    private readonly activitiesService: ActivitiesService;
 
-    constructor(testResultsService: TestResultsService) {
+    constructor(testResultsService: TestResultsService, activitiesService: ActivitiesService) {
         this.testResultsService = testResultsService;
+        this.activitiesService = activitiesService;
     }
 
     /**
@@ -28,53 +31,66 @@ class ReportGenerationService {
             testStatus: STATUSES.SUBMITTED
         })
         .then((testResults: any) => {
-            // Fetch and populate the ATF template
-            return this.fetchATFTemplate(testResults.length)
-            .then((template: { workbook: Excel.Workbook, reportTemplate: any} ) => {
-                const siteVisitDetails: any = template.reportTemplate.siteVisitDetails;
-                const declaration: any = template.reportTemplate.declaration;
+            // Fetch 'wait' activities for this visit activity
+            return this.activitiesService.getActivities({
+                testerStaffId: activity.testerStaffId,
+                fromStartTime: activity.startTime,
+                toStartTime: activity.endTime,
+                testStationPNumber: activity.testStationPNumber,
+                activityType: "wait",
+            }).then((waitActivities: any[]) => {
+                console.log(`wait Activities Size: ${waitActivities.length}`);
+                const totalActivitiesLen = testResults.length + waitActivities.length;
+                console.log(`Total Activities Len: ${totalActivitiesLen}`);
+                // Fetch and populate the ATF template
+                return this.fetchATFTemplate(totalActivitiesLen)
+                    .then((template: { workbook: Excel.Workbook, reportTemplate: any }) => {
+                        const siteVisitDetails: any = template.reportTemplate.siteVisitDetails;
+                        const declaration: any = template.reportTemplate.declaration;
 
-                // Populate site visit details
-                siteVisitDetails.assesor.value = activity.testerName;
-                siteVisitDetails.siteName.value = activity.testStationName;
-                siteVisitDetails.siteNumber.value = activity.testStationPNumber;
-                siteVisitDetails.date.value = moment(activity.startTime).tz(TIMEZONE.LONDON).format("DD/MM/YYYY");
-                siteVisitDetails.startTime.value = moment(activity.startTime).tz(TIMEZONE.LONDON).format("HH:mm:ss");
+                        // Populate site visit details
+                        siteVisitDetails.assesor.value = activity.testerName;
+                        siteVisitDetails.siteName.value = activity.testStationName;
+                        siteVisitDetails.siteNumber.value = activity.testStationPNumber;
+                        siteVisitDetails.date.value = moment(activity.startTime).tz(TIMEZONE.LONDON).format("DD/MM/YYYY");
+                        siteVisitDetails.startTime.value = moment(activity.startTime).tz(TIMEZONE.LONDON).format("HH:mm:ss");
 
-                // Populate declaration
-                declaration.date.value = moment(activity.endTime).tz(TIMEZONE.LONDON).format("DD/MM/YYYY");
-                declaration.finishTime.value = moment(activity.endTime).tz(TIMEZONE.LONDON).format("HH:mm:ss");
+                        // Populate declaration
+                        declaration.date.value = moment(activity.endTime).tz(TIMEZONE.LONDON).format("DD/MM/YYYY");
+                        declaration.finishTime.value = moment(activity.endTime).tz(TIMEZONE.LONDON).format("HH:mm:ss");
 
-                // Populate activity report
-                for (let i = 0, j = 0; i < template.reportTemplate.activityDetails.length && j < testResults.length; i++, j++) {
-                    const detailsTemplate: any = template.reportTemplate.activityDetails[i];
-                    const testResult: any = testResults[j];
-                    const testType: any = testResult.testTypes;
+                        // Populate activity report
+                        for (let i = 0, j = 0; i < template.reportTemplate.activityDetails.length && j < testResults.length; i++, j++) {
+                            const detailsTemplate: any = template.reportTemplate.activityDetails[i];
+                            const testResult: any = testResults[j];
+                            const testType: any = testResult.testTypes;
 
-                    detailsTemplate.activity.value = (activity.activityType === "visit") ? ACTIVITY_TYPE.TEST : ACTIVITY_TYPE.WAIT_TIME;
-                    detailsTemplate.startTime.value = moment(testResult.testStartTimestamp).tz(TIMEZONE.LONDON).format("HH:mm:ss");
-                    detailsTemplate.finishTime.value = moment(testResult.testEndTimestamp).tz(TIMEZONE.LONDON).format("HH:mm:ss");
-                    detailsTemplate.vrm.value = (testResult.vehicleType === VEHICLE_TYPES.TRL) ? testResult.trailerId : testResult.vrm;
-                    detailsTemplate.testDescription.value = testType.testTypeName;
-                    detailsTemplate.seatsAndAxles.value = (testResult.vehicleType === VEHICLE_TYPES.PSV) ? testResult.numberOfSeats : testResult.noOfAxles ;
-                    detailsTemplate.result.value = testType.testResult;
-                    detailsTemplate.certificateNumber.value = testType.certificateNumber;
-                    detailsTemplate.expiryDate.value = moment(testType.testExpiryDate).tz(TIMEZONE.LONDON).format("DD/MM/YYYY");
-                }
+                            detailsTemplate.activity.value = (activity.activityType === "visit") ? ACTIVITY_TYPE.TEST : ACTIVITY_TYPE.WAIT_TIME;
+                            detailsTemplate.startTime.value = moment(testResult.testStartTimestamp).tz(TIMEZONE.LONDON).format("HH:mm:ss");
+                            detailsTemplate.finishTime.value = moment(testResult.testEndTimestamp).tz(TIMEZONE.LONDON).format("HH:mm:ss");
+                            detailsTemplate.vrm.value = (testResult.vehicleType === VEHICLE_TYPES.TRL) ? testResult.trailerId : testResult.vrm;
+                            detailsTemplate.testDescription.value = testType.testTypeName;
+                            detailsTemplate.seatsAndAxles.value = (testResult.vehicleType === VEHICLE_TYPES.PSV) ? testResult.numberOfSeats : testResult.noOfAxles ;
+                            detailsTemplate.result.value = testType.testResult;
+                            detailsTemplate.certificateNumber.value = testType.certificateNumber;
+                            detailsTemplate.expiryDate.value = moment(testType.testExpiryDate).tz(TIMEZONE.LONDON).format("DD/MM/YYYY");
+                        }
 
-                return template.workbook.xlsx.writeBuffer()
-                .then((buffer: Excel.Buffer) => {
-                    return {
-                        // tslint:disable-next-line
-                        fileName: `ATFReport_${moment(activity.startTime).tz(TIMEZONE.LONDON).format("DD-MM-YYYY")}_${moment(activity.startTime).tz(TIMEZONE.LONDON).format("HHmm")}_${activity.testStationPNumber}_${activity.testerName}.xlsx`,
-                        fileBuffer: buffer,
-                        testResults
-                    };
-                });
+                        return template.workbook.xlsx.writeBuffer()
+                            .then((buffer: Excel.Buffer) => {
+                                return {
+                                    // tslint:disable-next-line
+                                    fileName: `ATFReport_${moment(activity.startTime).tz(TIMEZONE.LONDON).format("DD-MM-YYYY")}_${moment(activity.startTime).tz(TIMEZONE.LONDON).format("HHmm")}_${activity.testStationPNumber}_${activity.testerName}.xlsx`,
+                                    fileBuffer: buffer,
+                                    testResults,
+                                    waitActivities
+                                };
+                            });
+                    });
+            }).catch((error: any) => {
+                console.log(error);
+                throw new HTTPError(500, ERRORS.ATF_CANT_BE_CREATED);
             });
-        }).catch((error: any) => {
-            console.log(error);
-            throw new HTTPError(500, ERRORS.ATF_CANT_BE_CREATED);
         });
     }
 
@@ -185,4 +201,4 @@ class ReportGenerationService {
 
 }
 
-export {ReportGenerationService};
+export { ReportGenerationService };

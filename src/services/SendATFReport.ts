@@ -8,6 +8,8 @@ import { NotificationService } from "./NotificationService";
 // @ts-ignore
 import { NotifyClient } from "notifications-node-client";
 import { S3BucketMockService } from "../../tests/models/S3BucketMockService";
+import { IActivitiesList, IActivity, ITestResults } from "../models";
+import { ACTIVITY_TYPE } from "../assets/enum";
 
 @Service()
 class SendATFReport {
@@ -31,12 +33,13 @@ class SendATFReport {
  * @param visit - Data about the current visit
  */
   public sendATFReport(generationServiceResponse: any, visit: any) {
-    const testResultsList = generationServiceResponse.testResults;
+    // Add testResults and waitActivities in a common list and sort it by startTime
+    const activitiesList = this.computeActivitiesList(generationServiceResponse.testResults, generationServiceResponse.waitActivities);
     return this.s3BucketService.upload(`cvs-atf-reports-${process.env.BUCKET}`, generationServiceResponse.fileName, generationServiceResponse.fileBuffer)
       .then((result: any) => {
         return this.testStationsService.getTestStationEmail(visit.testStationPNumber)
           .then((response: any) => {
-            const sendNotificationData = this.notificationData.generateActivityDetails(visit, testResultsList);
+            const sendNotificationData = this.notificationData.generateActivityDetails(visit, activitiesList);
             return this.notifyService.sendNotification(sendNotificationData, response[0].testStationEmails).then(() => {
               return result;
             }).catch((error: any) => {
@@ -48,6 +51,45 @@ class SendATFReport {
             throw error;
           });
       });
+  }
+
+  /**
+   * Method to collate testResults and waitActivities into a common list
+   * and then sort them on startTime to display the activities in a sequence.
+   * @param testResultsList: testResults list
+   * @param waitActivitiesList: wait activities list
+   */
+  public computeActivitiesList(testResultsList: ITestResults[], waitActivitiesList: IActivity[]) {
+    const list: IActivitiesList[] = [];
+    // Adding Test activities to the list
+    for (const testResult of testResultsList) {
+      const act: IActivitiesList = {
+        startTime: testResult.testTypes[0].testTypeStartTimestamp,
+        activityType: ACTIVITY_TYPE.TEST,
+        activity: testResult
+      };
+      list.push(act);
+    }
+    // Adding Wait activities to the list
+    for (const waitTime of waitActivitiesList) {
+      const act: IActivitiesList = {
+        startTime: waitTime.startTime,
+        activityType: ACTIVITY_TYPE.TIME_NOT_TESTING,
+        activity: waitTime
+      };
+      list.push(act);
+    }
+    // Sorting the list by StartTime
+    const sortDateAsc = (date1: any, date2: any) => {
+      const date = new Date(date1.startTime).toISOString();
+      const dateToCompare = new Date(date2.startTime).toISOString();
+      if (date > dateToCompare) { return 1; }
+      if (date < dateToCompare) { return -1; }
+      return 0;
+    };
+    // Sort the list by startTime
+    list.sort(sortDateAsc);
+    return list;
   }
 }
 

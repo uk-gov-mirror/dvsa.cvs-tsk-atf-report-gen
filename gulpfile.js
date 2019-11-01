@@ -3,12 +3,12 @@ const exec = require('child_process').exec;
 const process = require('process');
 
 gulp.task('start-serverless', function (done) {
-    const instance = exec('AWS_XRAY_CONTEXT_MISSING=LOG_ERROR node_modules/serverless/bin/serverless offline start &', { env: process.env });
+    const instance = exec('node_modules/serverless/bin/serverless offline start &');
 
     instance.stdout.on('data', function (output) {
         process.stdout.write(output);
 
-        if (output.search('Offline listening') !== -1) {
+        if (output.search('replay the last request') !== -1) {
             done();
             process.exit(0);
         }

@@ -38,4 +38,4 @@ class S3BucketService {
     }
 }
 
-export {S3BucketService};
+export { S3BucketService };

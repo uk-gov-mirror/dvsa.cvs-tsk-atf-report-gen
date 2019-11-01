@@ -1,91 +1,88 @@
-import { expect } from "chai";
 import { reportGen } from "../../src/functions/reportGen";
 import mockContext from "aws-lambda-mock-context";
-import sinon from "sinon";
 import { ReportGenerationService } from "../../src/services/ReportGenerationService";
 import { SendATFReport } from "../../src/services/SendATFReport";
-const sandbox = sinon.createSandbox();
-
-const ctx = mockContext();
-
+jest.mock("../../src/services/ReportGenerationService");
+jest.mock("../../src/services/SendATFReport");
 
 describe("Retro Gen Function", () => {
+    const ctx = mockContext();
     context("Receiving an empty event (of various types)", () => {
         it("should throw errors (event = {})", async () => {
+            expect.assertions(1);
             try {
                 await reportGen({}, ctx, () => {
                     return;
                 });
-                expect.fail();
             } catch (e) {
-                expect(e.message).to.deep.equal("Event is empty");
+                expect(e.message).toEqual("Event is empty");
             }
         });
         it("should throw errors (event = null)", async () => {
+            expect.assertions(1);
             try {
                 await reportGen(null, ctx, () => {
                     return;
                 });
-                expect.fail();
             } catch (e) {
-                expect(e.message).to.deep.equal("Event is empty");
+                expect(e.message).toEqual("Event is empty");
             }
         });
         it("should throw errors (event has no records)", async () => {
+            expect.assertions(1);
             try {
                 await reportGen({something: true}, ctx, () => {
                     return;
                 });
-                expect.fail();
             } catch (e) {
-                expect(e.message).to.deep.equal("Event is empty");
+                expect(e.message).toEqual("Event is empty");
             }
         });
         it("should throw errors (event Records is not array)", async () => {
+            expect.assertions(1);
             try {
                 await reportGen({Records: true}, ctx, () => {
                     return;
                 });
-                expect.fail();
             } catch (e) {
-                expect(e.message).to.deep.equal("Event is empty");
+                expect(e.message).toEqual("Event is empty");
             }
         });
         it("should throw errors (event Records array is empty)", async () => {
+            expect.assertions(1);
             try {
                 await reportGen({Records: []}, ctx, () => {
                     return;
                 });
-                expect.fail();
             } catch (e) {
-                expect(e.message).to.deep.equal("Event is empty");
+                expect(e.message).toEqual("Event is empty");
             }
         });
     });
 
     context("Inner services fail", () => {
         afterEach(() => {
-            sandbox.restore();
+            jest.restoreAllMocks();
         });
 
         it("Should throw an error (generateATFReport fails)", async () => {
-            sandbox.stub(ReportGenerationService.prototype, "generateATFReport").throws(new Error("Oh no!"));
+            ReportGenerationService.prototype.generateATFReport = jest.fn().mockRejectedValue(new  Error("Oh no!"));
+            expect.assertions(1);
+            // sandbox.stub(ReportGenerationService.prototype, "generateATFReport").throws(new Error("Oh no!"));
             try {
                 await reportGen({Records: [{body: true }]}, ctx, () => {return; });
-                expect.fail();
             } catch (e) {
-                expect(e.message).to.deep.equal("Oh no!");
+                expect(e.message).toEqual("Oh no!");
             }
         });
         it("Should throw an error (bucket upload fails)", async () => {
-            sandbox.stub(ReportGenerationService.prototype, "generateATFReport").resolves("Looking good");
-            sandbox.stub(SendATFReport.prototype, "sendATFReport").throws(new Error("Oh dear"));
+            ReportGenerationService.prototype.generateATFReport = jest.fn().mockResolvedValue("Looking good");
+            SendATFReport.prototype.sendATFReport = jest.fn().mockRejectedValue(new Error("Oh dear"));
+            expect.assertions(1);
             try {
                 await reportGen({Records: [{body: true }]}, ctx, () => {return; });
-                expect.fail();
             } catch (e) {
-                console.log(e);
-                expect(e.message).to.deep.equal("Oh dear");
+                expect(e.message).toEqual("Oh dear");
             }
         });
     });
