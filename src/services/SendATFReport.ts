@@ -40,7 +40,7 @@ class SendATFReport {
         return this.testStationsService.getTestStationEmail(visit.testStationPNumber)
           .then((response: any) => {
             const sendNotificationData = this.notificationData.generateActivityDetails(visit, activitiesList);
-            return this.notifyService.sendNotification(sendNotificationData, response[0].testStationEmails).then(() => {
+            return this.notifyService.sendNotification(sendNotificationData, response.testStationEmails).then(() => {
               return result;
             }).catch((error: any) => {
               console.log(error);
@@ -64,7 +64,7 @@ class SendATFReport {
     // Adding Test activities to the list
     for (const testResult of testResultsList) {
       const act: IActivitiesList = {
-        startTime: testResult.testTypes[0].testTypeStartTimestamp,
+        startTime: testResult.testTypes.testTypeStartTimestamp,
         activityType: ACTIVITY_TYPE.TEST,
         activity: testResult
       };

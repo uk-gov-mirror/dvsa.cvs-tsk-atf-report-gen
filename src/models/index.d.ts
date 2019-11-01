@@ -62,7 +62,7 @@ interface ITestResults {
     numberOfSeats: number;
     testStartTimestamp: string;
     testEndTimestamp: string;
-    testTypes: ITestType[];
+    testTypes: ITestType;
     vin: string;
     vehicleType: string;
 }

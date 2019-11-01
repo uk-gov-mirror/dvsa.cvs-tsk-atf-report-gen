@@ -6,6 +6,7 @@ import event from "../resources/queue-event.json";
 import testResultsList from "../resources/test-results-200-response.json";
 import waitActivitiesList from "../resources/wait-time-response.json";
 import testResultsListMultiTest from "../resources/test-results-200-response-multi-test.json";
+import { TestResultsService } from "../../src/services/TestResultsService";
 
 describe("notificationData", () => {
     context("report data generation", () => {
@@ -16,7 +17,7 @@ describe("notificationData", () => {
 
         context("when parsing the visit and the test results", () => {
             it("should return a correct test stations emails", () => {
-                const testResultsArray = JSON.parse(testResultsList.body);
+                const testResultsArray = TestResultsService.prototype.expandTestResults(JSON.parse(testResultsList.body));
                 const waitActivitiesArray = JSON.parse(waitActivitiesList.body);
                 const sendNotificationData = notificationData.generateActivityDetails(visit, sendAtfReport.computeActivitiesList(testResultsArray, waitActivitiesArray));
                 expect(sendNotificationData.testStationPNumber).toEqual(testResultsArray[0].testStationPNumber);
@@ -30,7 +31,7 @@ describe("notificationData", () => {
 
         context("when parsing the visit and multiple test results", () => {
             it("should return a correct test stations emails with dividers", () => {
-                const testResultsArray = JSON.parse(testResultsListMultiTest.body);
+                const testResultsArray = TestResultsService.prototype.expandTestResults(JSON.parse(testResultsListMultiTest.body));
                 const sendNotificationData = notificationData.generateActivityDetails(visit, sendAtfReport.computeActivitiesList(testResultsArray, []));
                 expect(sendNotificationData.testStationPNumber).toEqual(testResultsArray[0].testStationPNumber);
                 expect(sendNotificationData.testerName).toEqual(visit.testerName);

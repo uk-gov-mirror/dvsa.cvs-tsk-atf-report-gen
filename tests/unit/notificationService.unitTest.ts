@@ -5,6 +5,7 @@ import event from "../resources/queue-event.json";
 import testResultsList from "../resources/test-results-200-response.json";
 import waitActivitiesList from "../resources/wait-time-response.json";
 import { TEMPLATE_IDS } from "../../src/assets/enum";
+import { TestResultsService } from "../../src/services/TestResultsService";
 jest.mock("notifications-node-client");
 
 describe("notification service", () => {
@@ -16,7 +17,7 @@ describe("notification service", () => {
         context("when sending email with the correct data and emails", () => {
             it("should invoke the NotificationClient with correct arguments", async () => {
                 const visit: any = JSON.parse(event.Records[0].body);
-                const testResultsArray = JSON.parse(testResultsList.body);
+                const testResultsArray = TestResultsService.prototype.expandTestResults(JSON.parse(testResultsList.body));
                 const waitActivitesArray = JSON.parse(waitActivitiesList.body);
                 const sendAtfReport: SendATFReport = new SendATFReport();
                 const notificationData: NotificationData = new NotificationData();
