@@ -5,6 +5,7 @@ import testResults404 from "../resources/test-results-404-response.json";
 import { AWSError, Lambda, Response } from "aws-sdk";
 import { HTTPError } from "../../src/models/HTTPError";
 import { LambdaService } from "../../src/services/LambdaService";
+import { wrapLambdaErrorResponse, wrapLambdaResponse } from "../util/responseUtils";
 
 describe("TestResultsService", () => {
     context("when fetching the test results", () => {
@@ -149,33 +150,3 @@ describe("TestResultsService", () => {
         });
     });
 });
-
-const wrapLambdaResponse = (payload: any) => {
-    const response = new Response<Lambda.Types.InvocationResponse, AWSError>();
-    Object.assign(response, {
-        data: {
-            StatusCode: 200,
-            Payload: payload
-        }
-    });
-    return {
-        $response: response,
-        StatusCode: 200,
-        Payload: payload
-    };
-};
-
-const wrapLambdaErrorResponse = (code: number, payload: any) => {
-    const response = new Response<Lambda.Types.InvocationResponse, AWSError>();
-    Object.assign(response, {
-        data: {
-            StatusCode: code,
-            Payload: payload
-        }
-    });
-    return {
-        $response: response,
-        StatusCode: code,
-        Payload: payload
-    };
-};
