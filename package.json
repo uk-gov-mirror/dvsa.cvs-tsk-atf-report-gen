@@ -1,7 +1,7 @@
 {
-  "name": "cvs-tsk-report-gen",
+  "name": "cvs-tsk-atf-report-gen",
   "version": "0.0.1",
-  "description": "Report generation",
+  "description": "ATF Report generation",
   "main": "handler.js",
   "scripts": {
     "start": "npm run kill:offline && BRANCH=local BUCKET=local AWS_XRAY_CONTEXT_MISSING=LOG_ERROR npm run start:offline && node_modules/serverless/bin/serverless invoke local -f main --path tests/resources/queue-event.json",
