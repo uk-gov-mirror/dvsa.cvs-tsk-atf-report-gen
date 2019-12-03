@@ -23,7 +23,7 @@ class NotificationData {
       if(event.activityType === ACTIVITY_TYPE.TEST) {
         const axlesSeats = (event.activity.vehicleType === VEHICLE_TYPES.PSV) ? event.activity.numberOfSeats : event.activity.noOfAxles;
         const vrmTrailerId = (event.activity.vehicleType === VEHICLE_TYPES.TRL) ? event.activity.trailerId : event.activity.vrm;
-        personalization.activityDetails += `^#${this.capitalise(personalization.activityType)} (${vrmTrailerId})
+        personalization.activityDetails += `^#${this.capitalise(event.activityType)} (${vrmTrailerId})
       ^• Time: ${this.formatDateAndTime(event.activity.testTypes.testTypeStartTimestamp, "time")} - ${this.formatDateAndTime(event.activity.testTypes.testTypeEndTimeStamp, "time")}
       ^• Test description: ${event.activity.testTypes.testTypeName}
       ^• Axles / Seats: ${axlesSeats}
