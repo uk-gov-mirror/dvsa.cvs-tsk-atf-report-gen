@@ -1,4 +1,3 @@
-import { expect } from "chai";
 import { Configuration } from "../../src/utils/Configuration";
 import { IS3Config } from "../../src/models";
 
@@ -9,7 +8,7 @@ describe("ConfigurationUtil", () => {
             process.env.BRANCH = "local";
             const s3config: IS3Config = config.getS3Config();
             it("should return the local S3 config", () => {
-                expect (s3config.endpoint).to.equal("http://localhost:7000");
+                expect (s3config.endpoint).toEqual("http://localhost:7000");
             });
         });
 
@@ -17,7 +16,7 @@ describe("ConfigurationUtil", () => {
             process.env.BRANCH = "";
             const s3config: IS3Config = config.getS3Config();
             it("should return the local S3 config", () => {
-                expect (s3config.endpoint).to.equal("http://localhost:7000");
+                expect (s3config.endpoint).toEqual("http://localhost:7000");
             });
         });
 
@@ -26,7 +25,7 @@ describe("ConfigurationUtil", () => {
             const s3config: IS3Config = config.getS3Config();
             it("should return the local S3 config", () => {
                 // tslint:disable-next-line:no-unused-expression
-                expect (s3config).to.be.empty;
+                expect (s3config).toEqual({});
             });
         });
 

@@ -1,27 +1,25 @@
-import { Service } from "../models/injector/ServiceDecorator";
-import { S3BucketService } from "../services/S3BucketService";
-import { Injector } from "../models/injector/Injector";
-import { Configuration } from "../utils/Configuration";
-import { TestStationsService } from "./TestStationsService";
-import { NotificationData } from "../utils/generateNotificationData";
-import { NotificationService } from "./NotificationService";
 // @ts-ignore
 import { NotifyClient } from "notifications-node-client";
-import { S3BucketMockService } from "../../tests/models/S3BucketMockService";
-import { IActivitiesList, IActivity, ITestResults } from "../models";
+import { Lambda, S3 } from "aws-sdk";
 import { ACTIVITY_TYPE } from "../assets/enum";
+import { Configuration } from "../utils/Configuration";
+import { IActivitiesList, IActivity, ITestResults } from "../models";
+import { LambdaService } from "./LambdaService";
+import { NotificationData } from "../utils/generateNotificationData";
+import { NotificationService } from "./NotificationService";
+import { S3BucketService } from "./S3BucketService";
+import { TestStationsService } from "./TestStationsService";
 
-@Service()
 class SendATFReport {
-  public s3BucketService: S3BucketService | S3BucketMockService;
+  public s3BucketService: S3BucketService;
   public testStationsService: TestStationsService;
   private readonly notificationData: NotificationData;
   private readonly notifyService: NotificationService;
   private readonly notifyClient: NotifyClient;
 
   constructor() {
-    this.s3BucketService = Injector.resolve<S3BucketService>(S3BucketService);
-    this.testStationsService = Injector.resolve<TestStationsService>(TestStationsService);
+    this.s3BucketService = new S3BucketService(new S3());
+    this.testStationsService = new TestStationsService(new LambdaService( new Lambda()));
     this.notificationData = new NotificationData();
     this.notifyClient = new NotifyClient(Configuration.getInstance().getGovNotifyConfig().api_key);
     this.notifyService = new NotificationService(this.notifyClient);
@@ -40,7 +38,7 @@ class SendATFReport {
         return this.testStationsService.getTestStationEmail(visit.testStationPNumber)
           .then((response: any) => {
             const sendNotificationData = this.notificationData.generateActivityDetails(visit, activitiesList);
-            return this.notifyService.sendNotification(sendNotificationData, response.testStationEmails).then(() => {
+            return this.notifyService.sendNotification(sendNotificationData, response[0].testStationEmails).then(() => {
               return result;
             }).catch((error: any) => {
               console.log(error);

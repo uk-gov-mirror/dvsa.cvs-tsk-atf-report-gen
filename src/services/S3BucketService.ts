@@ -1,6 +1,5 @@
 import S3, { Metadata } from "aws-sdk/clients/s3";
 import { config as AWSConfig } from "aws-sdk";
-import { Service } from "../models/injector/ServiceDecorator";
 import { Readable } from "stream";
 import { Configuration } from "../utils/Configuration";
 import { IS3Config } from "../models";
@@ -10,7 +9,6 @@ import SendData = ManagedUpload.SendData;
 const AWSXRay = require("aws-xray-sdk");
 /* tslint:enable */
 
-@Service()
 class S3BucketService {
     public readonly s3Client: S3;
 

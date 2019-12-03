@@ -89,10 +89,13 @@ describe("sendATFReport", () => {
           ],
           testStationId: "9"
         }]);
+        const notifyMock = jest.fn().mockResolvedValue("We won!");
         // @ts-ignore
-        sendATFReport.notifyService.sendNotification = jest.fn().mockResolvedValue("We won!");
-        expect.assertions(1);
+        sendATFReport.notifyService.sendNotification = notifyMock;
+        expect.assertions(2);
         return sendATFReport.sendATFReport(generationServiceResponse, visit).then((response: any) => {
+          const notifyCallArgs = notifyMock.mock.calls[0];
+          expect(notifyCallArgs[1]).toEqual(["teststationname@dvsa.gov.uk"]);
           expect(response).toEqual("details from s3");
         });
       });

@@ -1,5 +1,3 @@
-import { expect } from "chai";
-import { Injector } from "../../src/models/injector/Injector";
 import { LambdaMockService } from "../models/LambdaMockService";
 import { TestStationsService } from "../../src/services/TestStationsService";
 import AWS, { Lambda } from "aws-sdk";
@@ -11,7 +9,8 @@ AWSMock.setSDKInstance(AWS);
 
 
 describe("TestStationsService", () => {
-    const testStationsService: TestStationsService = Injector.resolve<TestStationsService>(TestStationsService, [LambdaMockService]);
+    // @ts-ignore
+    const testStationsService: TestStationsService = new TestStationsService(new LambdaMockService());
     LambdaMockService.populateFunctions();
 
     afterEach(()=> {
@@ -23,7 +22,7 @@ describe("TestStationsService", () => {
             context("and the response is 200", () => {
                 it("should return a correct test stations emails", () => {
                     return testStationsService.getTestStationEmail("87-1369569").then((data) => {
-                       expect(data[0].testStationEmails.length).to.equal(3);
+                       expect(data[0].testStationEmails.length).toEqual(3);
                     });
                 });
             });
@@ -33,12 +32,11 @@ describe("TestStationsService", () => {
             it("should bubble up the error (error in Invoke)", async () => {
                 const service = new TestStationsService(new LambdaService(new Lambda()));
                 sandbox.stub(LambdaService.prototype, "invoke").throws(new Error("Oh no"));
+                expect.assertions(1);
                 try {
-                    const resp = await service.getTestStationEmail("something");
-                    console.log("RESP: ", resp);
-                    expect.fail();
+                    await service.getTestStationEmail("something");
                 } catch (e) {
-                    expect(e.message).to.deep.equal("Oh no");
+                    expect(e.message).toEqual("Oh no");
                 }
             });
 
@@ -48,11 +46,11 @@ describe("TestStationsService", () => {
                 const service = new TestStationsService(new LambdaService(lambda));
 
                 sandbox.stub(LambdaService.prototype, "validateInvocationResponse").throws(new Error("Not again"));
+                expect.assertions(1);
                 try {
                     await service.getTestStationEmail("something");
-                    expect.fail();
                 } catch (e) {
-                    expect(e.body).to.deep.equal("Not again");
+                    expect(e.body).toEqual("Not again");
                 }
                 AWSMock.restore("Lambda");
             });

@@ -1,5 +1,3 @@
-import { Service } from "../models/injector/ServiceDecorator";
-import { NotifyClientMock } from "../../tests/models/NotifyClientMock";
 import { TEMPLATE_IDS } from "../assets/enum";
 import { AWSError } from "aws-sdk";
 import { HTTPError } from "../models/HTTPError";
@@ -9,11 +7,10 @@ import { NotifyClient } from "notifications-node-client";
 /**
  * Service class for Certificate Notifications
  */
-@Service()
 class NotificationService {
-    private readonly notifyClient: NotifyClient | NotifyClientMock;
+    private readonly notifyClient: NotifyClient;
 
-    constructor(notifyClient: NotifyClient | NotifyClientMock) {
+    constructor(notifyClient: NotifyClient) {
         this.notifyClient = notifyClient;
     }
 
