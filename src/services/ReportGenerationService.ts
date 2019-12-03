@@ -1,14 +1,12 @@
 import { IActivity } from "../models";
 import * as Excel from "exceljs";
 import * as path from "path";
-import { Service } from "../models/injector/ServiceDecorator";
 import { TestResultsService } from "./TestResultsService";
 import moment = require("moment-timezone");
 import { ACTIVITY_TYPE, ERRORS, STATUSES, TIMEZONE, VEHICLE_TYPES } from "../assets/enum";
 import { HTTPError } from "../models/HTTPError";
 import { ActivitiesService } from "./ActivitiesService";
 
-@Service()
 class ReportGenerationService {
     private readonly testResultsService: TestResultsService;
     private readonly activitiesService: ActivitiesService;

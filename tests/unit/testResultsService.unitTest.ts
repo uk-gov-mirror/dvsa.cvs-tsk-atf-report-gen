@@ -2,7 +2,6 @@ import { TestResultsService } from "../../src/services/TestResultsService";
 import testResults200 from "../resources/test-results-200-response.json";
 import testResults200EmptyBody from "../resources/test-results-200-response-empty-body.json";
 import testResults404 from "../resources/test-results-404-response.json";
-import { AWSError, Lambda, Response } from "aws-sdk";
 import { HTTPError } from "../../src/models/HTTPError";
 import { LambdaService } from "../../src/services/LambdaService";
 import { wrapLambdaErrorResponse, wrapLambdaResponse } from "../util/responseUtils";

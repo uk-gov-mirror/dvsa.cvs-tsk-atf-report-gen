@@ -1,12 +1,9 @@
 import { IInvokeConfig } from "../models";
-import { PromiseResult } from "aws-sdk/lib/request";
-import { AWSError, Lambda } from "aws-sdk";
+import { Lambda } from "aws-sdk";
 import { LambdaService } from "./LambdaService";
 import { Configuration } from "../utils/Configuration";
-import { Service } from "../models/injector/ServiceDecorator";
 import { HTTPError } from "../models/HTTPError";
 
-@Service()
 class TestStationsService {
     private readonly lambdaClient: LambdaService;
     private readonly config: Configuration;
@@ -37,8 +34,7 @@ class TestStationsService {
         return this.lambdaClient.invoke(invokeParams)
             .then((response: Lambda.Types.InvocationResponse) => {
                 const payload: any = this.lambdaClient.validateInvocationResponse(response); // Response validation
-                const testStationEmails: any[] = JSON.parse(payload.body); // Response conversion
-                return testStationEmails;
+                return JSON.parse(payload.body); // Response conversion
             }).catch((error) => {
                 console.log(error);
                 throw new HTTPError(500, error.message);

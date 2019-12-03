@@ -1,4 +1,3 @@
-import { Injector } from "../../src/models/injector/Injector";
 import { ReportGenerationService } from "../../src/services/ReportGenerationService";
 import { LambdaMockService } from "../models/LambdaMockService";
 import { TestResultsService } from "../../src/services/TestResultsService";
@@ -16,8 +15,11 @@ describe("ReportGenerationService", () => {
     jest.resetModuleRegistry();
     jest.restoreAllMocks();
   });
-  const testResultsService: TestResultsService = Injector.resolve<TestResultsService>(TestResultsService, [LambdaMockService]);
-  const activitiesService: ActivitiesService = Injector.resolve<ActivitiesService>(ActivitiesService, [LambdaMockService]);
+  const lambdaMockService = new LambdaMockService();
+  // @ts-ignore
+  const testResultsService: TestResultsService = new TestResultsService(lambdaMockService);
+  // @ts-ignore
+  const activitiesService: ActivitiesService = new ActivitiesService(lambdaMockService);
   const reportGenerationService: ReportGenerationService = new ReportGenerationService(testResultsService, activitiesService);
   LambdaMockService.populateFunctions();
 

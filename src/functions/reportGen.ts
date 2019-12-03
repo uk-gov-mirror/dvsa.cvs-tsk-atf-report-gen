@@ -1,10 +1,13 @@
+import { AWSError, Lambda } from "aws-sdk";
 import { Callback, Context, Handler } from "aws-lambda";
-import { Injector } from "../models/injector/Injector";
 import { ManagedUpload } from "aws-sdk/clients/s3";
-import { ReportGenerationService } from "../services/ReportGenerationService";
-import { AWSError } from "aws-sdk";
-import { SendATFReport } from "../services/SendATFReport";
+
+import { ActivitiesService } from "../services/ActivitiesService";
 import { ERRORS } from "../assets/enum";
+import { ReportGenerationService } from "../services/ReportGenerationService";
+import { SendATFReport } from "../services/SendATFReport";
+import { TestResultsService } from "../services/TestResultsService";
+import { LambdaService } from "../services/LambdaService";
 
 /**
  * λ function to process a DynamoDB stream of test results into a queue for certificate generation.
@@ -17,7 +20,8 @@ const reportGen: Handler = async (event: any, context?: Context, callback?: Call
         console.error("ERROR: event is not defined.");
         throw new Error(ERRORS.EVENT_IS_EMPTY);
     }
-    const reportService: ReportGenerationService = Injector.resolve<ReportGenerationService>(ReportGenerationService);
+    const lambdaService = new LambdaService(new Lambda());
+    const reportService: ReportGenerationService = new ReportGenerationService(new TestResultsService(lambdaService), new ActivitiesService(lambdaService));
     const retroUploadPromises: Array<Promise<ManagedUpload.SendData>> = [];
 
     const sendATFReport: SendATFReport = new SendATFReport();
