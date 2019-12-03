@@ -1,12 +1,13 @@
+import { ACTIVITY_TYPE } from "../../src/assets/enum";
+import { Configuration } from "../../src/utils/Configuration";
+import event from "../resources/queue-event.json";
 import { LambdaMockService } from "../models/LambdaMockService";
 import { NotificationData } from "../../src/utils/generateNotificationData";
-import { Configuration } from "../../src/utils/Configuration";
 import { SendATFReport } from "../../src/services/SendATFReport";
-import event from "../resources/queue-event.json";
 import testResultsList from "../resources/test-results-200-response.json";
-import waitActivitiesList from "../resources/wait-time-response.json";
 import testResultsListMultiTest from "../resources/test-results-200-response-multi-test.json";
 import { TestResultsService } from "../../src/services/TestResultsService";
+import waitActivitiesList from "../resources/wait-time-response.json";
 
 describe("notificationData", () => {
     context("report data generation", () => {
@@ -20,6 +21,8 @@ describe("notificationData", () => {
                 const testResultsArray = TestResultsService.prototype.expandTestResults(JSON.parse(testResultsList.body));
                 const waitActivitiesArray = JSON.parse(waitActivitiesList.body);
                 const sendNotificationData = notificationData.generateActivityDetails(visit, sendAtfReport.computeActivitiesList(testResultsArray, waitActivitiesArray));
+                const detailsLines = sendNotificationData.activityDetails.split("\n");
+                expect(detailsLines[0]).toContain(ACTIVITY_TYPE.TEST);
                 expect(sendNotificationData.testStationPNumber).toEqual(testResultsArray[0].testStationPNumber);
                 expect(sendNotificationData.testerName).toEqual(visit.testerName);
                 expect(sendNotificationData.startTimeDate).toEqual("14/01/2019");
@@ -33,6 +36,8 @@ describe("notificationData", () => {
             it("should return a correct test stations emails with dividers", () => {
                 const testResultsArray = TestResultsService.prototype.expandTestResults(JSON.parse(testResultsListMultiTest.body));
                 const sendNotificationData = notificationData.generateActivityDetails(visit, sendAtfReport.computeActivitiesList(testResultsArray, []));
+                const detailsLines = sendNotificationData.activityDetails.split("\n");
+                expect(detailsLines[0]).toContain(ACTIVITY_TYPE.TEST);
                 expect(sendNotificationData.testStationPNumber).toEqual(testResultsArray[0].testStationPNumber);
                 expect(sendNotificationData.testerName).toEqual(visit.testerName);
                 expect(sendNotificationData.startTimeDate).toEqual("14/01/2019");
@@ -45,6 +50,7 @@ describe("notificationData", () => {
 
         // TODO Add tests to verify the waitTime fields for "Time not Testing" activity added in ATF report.
         // Verify for activityType, startTime, endTime, waitReason values.
+
     });
 
 
