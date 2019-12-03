@@ -48,8 +48,21 @@ describe("notificationData", () => {
             });
         });
 
-        // TODO Add tests to verify the waitTime fields for "Time not Testing" activity added in ATF report.
-        // Verify for activityType, startTime, endTime, waitReason values.
+        context("when parsing a Time Not Testing event", () => {
+            it("should return correct test stations email data", () => {
+                const waitActivitiesArray = JSON.parse(waitActivitiesList.body);
+                const sendNotificationData = notificationData.generateActivityDetails(visit, sendAtfReport.computeActivitiesList([], waitActivitiesArray));
+                const detailsLines = sendNotificationData.activityDetails.split("\n");
+                // Title line
+                expect(detailsLines[0]).toContain(ACTIVITY_TYPE.TIME_NOT_TESTING);
+                // "Reason" line
+                expect(detailsLines[2]).toContain("Break");
+                expect(sendNotificationData.testerName).toEqual(visit.testerName);
+                expect(sendNotificationData.startTimeDate).toEqual("14/01/2019");
+                expect(sendNotificationData.startTime).toEqual("08:47:33");
+                expect(sendNotificationData.endTime).toEqual("15:36:33");
+            });
+        });
 
     });
 
