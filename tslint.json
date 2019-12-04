@@ -17,6 +17,7 @@
     "jsdoc-format": true,
     "completed-docs": [true, "methods"],
     "whitespace": [true, "check-module"]
+
   },
   "linterOptions": {
     "exclude": [

@@ -1,4 +1,7 @@
+import { NotificationService } from "../../src/services/NotificationService";
 import { SendATFReport } from "../../src/services/SendATFReport";
+// @ts-ignore
+import { NotifyClient } from "notifications-node-client";
 import mockConfig from "../util/mockConfig";
 
 describe("sendATFReport", () => {
@@ -20,9 +23,10 @@ describe("sendATFReport", () => {
       endTime: "2019-01-14T15:36:33.987Z"
     };
     const generationServiceResponse = {
-        waitActivities:[],
+      waitActivities: [],
       testResults:
-        [ { testerStaffId: "1",
+        [{
+          testerStaffId: "1",
           vrm: "JY58FPP",
           testStationPNumber: "87-1369569",
           preparerId: "ak4434",
@@ -31,11 +35,12 @@ describe("sendATFReport", () => {
           testEndTimestamp: "2019-01-14T10:36:33.987Z",
           testTypes: [Object],
           vin: "XMGDE02FS0H012345",
-          vehicleType: "psv" } ],
+          vehicleType: "psv"
+        }],
       fileName: "ATFReport_14-01-2019_0847_87-1369569_Gica.xlsx",
       fileBuffer:
         "<Buffer 50 4b 03 04 0a 00 00 00 08 00 c6 64 c3 4e 19 f8 08 be 60 01 00 00 39 05 00 00 13 00 00 00 5b 43 6f 6e 74 65 6e 74 5f 54 79 70 65 73 5d 2e 78 6d 6c ad ... >",
-      };
+    };
 
     context("When the s3Bucket service throws an error", () => {
       it("should bubble up that error", () => {
@@ -63,6 +68,8 @@ describe("sendATFReport", () => {
     context("When the Notification service throws an error", () => {
       it("should bubble up that error", () => {
         const sendATFReport: SendATFReport = new SendATFReport();
+        sendATFReport.notifyService = new NotificationService(new NotifyClient());
+        sendATFReport.notifyService.sendNotification = jest.fn().mockRejectedValue(new Error("It Broke"));
         sendATFReport.s3BucketService.upload = jest.fn().mockResolvedValue("ok");
         sendATFReport.testStationsService.getTestStationEmail = jest.fn().mockResolvedValue([{
           testStationPNumber: "09-4129632",
@@ -71,8 +78,6 @@ describe("sendATFReport", () => {
           ],
           testStationId: "9"
         }]);
-        // @ts-ignore
-        sendATFReport.notifyService.sendNotification = jest.fn().mockRejectedValue(new Error("It Broke"));
         expect.assertions(1);
         return sendATFReport.sendATFReport(generationServiceResponse, visit).catch((error: any) => {
           expect(error.message).toEqual("It Broke");
@@ -83,6 +88,9 @@ describe("sendATFReport", () => {
     context("When services succeed", () => {
       it("should return success and details of storage", () => {
         const sendATFReport: SendATFReport = new SendATFReport();
+        sendATFReport.notifyService = new NotificationService(new NotifyClient());
+        const notifyMock = jest.fn().mockResolvedValue(true);
+        sendATFReport.notifyService.sendNotification = notifyMock;
         sendATFReport.s3BucketService.upload = jest.fn().mockResolvedValue("details from s3");
         sendATFReport.testStationsService.getTestStationEmail = jest.fn().mockResolvedValue([{
           testStationPNumber: "09-4129632",
@@ -91,9 +99,6 @@ describe("sendATFReport", () => {
           ],
           testStationId: "9"
         }]);
-        const notifyMock = jest.fn().mockResolvedValue("We won!");
-        // @ts-ignore
-        sendATFReport.notifyService.sendNotification = notifyMock;
         expect.assertions(2);
         return sendATFReport.sendATFReport(generationServiceResponse, visit).then((response: any) => {
           const notifyCallArgs = notifyMock.mock.calls[0];

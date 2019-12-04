@@ -1,6 +1,6 @@
 import moment = require("moment-timezone");
 import { ACTIVITY_TYPE, TIMEZONE, VEHICLE_TYPES } from "../assets/enum";
-import { IActivitiesList, ITestResults } from "../models";
+import { IActivitiesList } from "../models";
 
 class NotificationData {
   /**
@@ -20,7 +20,7 @@ class NotificationData {
     personalization.testStationName = visit.testStationName;
     personalization.activityDetails = "";
     for (const [index, event] of activitiesList.entries()) {
-      if(event.activityType === ACTIVITY_TYPE.TEST) {
+      if (event.activityType === ACTIVITY_TYPE.TEST) {
         const axlesSeats = (event.activity.vehicleType === VEHICLE_TYPES.PSV) ? event.activity.numberOfSeats : event.activity.noOfAxles;
         const vrmTrailerId = (event.activity.vehicleType === VEHICLE_TYPES.TRL) ? event.activity.trailerId : event.activity.vrm;
         personalization.activityDetails += `^#${this.capitalise(event.activityType)} (${vrmTrailerId})
@@ -32,7 +32,7 @@ class NotificationData {
           + `${event.activity.testTypes.testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime(event.activity.testTypes.testExpiryDate, "date")}` : ""}`
           + `${(index < activitiesList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
       }
-      if(event.activityType === ACTIVITY_TYPE.TIME_NOT_TESTING) {
+      if (event.activityType === ACTIVITY_TYPE.TIME_NOT_TESTING) {
         personalization.activityDetails += `^#${this.capitalise(ACTIVITY_TYPE.TIME_NOT_TESTING)}
       ^• Time: ${this.formatDateAndTime(event.activity.startTime, "time")} - ${this.formatDateAndTime(event.activity.endTime, "time")}
       ^• Reason: ${event.activity.waitReason}`
@@ -62,7 +62,7 @@ class NotificationData {
    * @param str
    */
   private capitalise(str: string) {
-    if(!str) {
+    if (!str) {
       return str;
     }
     return str.charAt(0).toUpperCase() + str.slice(1);
