@@ -11,11 +11,11 @@ describe("Activities Service", () => {
       it("returns parsed result", async () => {
         const mockLambdaService = jest.fn().mockImplementation(() => {
           return {
-            invoke: () =>Promise.resolve(wrapLambdaResponse(JSON.stringify(waitResponse))),
+            invoke: () => Promise.resolve(wrapLambdaResponse(JSON.stringify(waitResponse))),
             validateInvocationResponse: LambdaService.prototype.validateInvocationResponse
           };
         });
-        const activityService= new ActivitiesService(new mockLambdaService());
+        const activityService = new ActivitiesService(new mockLambdaService());
         const result = await activityService.getActivities({});
         expect(result).toEqual([{
           startTime: "2019-01-14T10:42:33.987Z",
@@ -28,14 +28,14 @@ describe("Activities Service", () => {
     context("Lambda client returns multiple records in expected format", () => {
       it("returns sorted result set", async () => {
         const waitActivity = JSON.parse(waitResponse.body)[0];
-        const latestActivity = {...waitActivity, startTime: "2019-01-14T10:42:33.987Z"};
-        const middleActivity = {...waitActivity, startTime: "2019-01-14T09:42:33.987Z"};
-        const earliestActivity = {...waitActivity, startTime: "2019-01-14T08:42:33.987Z"};
-        const myEvent = {...waitResponse, body: JSON.stringify([latestActivity, earliestActivity, middleActivity, middleActivity])};
+        const latestActivity = { ...waitActivity, startTime: "2019-01-14T10:42:33.987Z" };
+        const middleActivity = { ...waitActivity, startTime: "2019-01-14T09:42:33.987Z" };
+        const earliestActivity = { ...waitActivity, startTime: "2019-01-14T08:42:33.987Z" };
+        const myEvent = { ...waitResponse, body: JSON.stringify([latestActivity, earliestActivity, middleActivity, middleActivity]) };
 
         const mockLambdaService = jest.fn().mockImplementation(() => {
           return {
-            invoke: () =>Promise.resolve(wrapLambdaResponse(JSON.stringify(myEvent))),
+            invoke: () => Promise.resolve(wrapLambdaResponse(JSON.stringify(myEvent))),
             validateInvocationResponse: LambdaService.prototype.validateInvocationResponse
 
           };

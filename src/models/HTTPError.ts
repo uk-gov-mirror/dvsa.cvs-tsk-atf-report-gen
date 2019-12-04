@@ -5,6 +5,7 @@ class HTTPError extends Error {
 
   private statusCode = 0;
   private body = "";
+
   /**
    * Constructor for the HTTPResponseError class
    * @param statusCode the HTTP status code
