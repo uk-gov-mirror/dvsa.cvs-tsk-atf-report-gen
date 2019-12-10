@@ -1,19 +1,22 @@
-import { LambdaMockService } from "../models/LambdaMockService";
-import { TestStationsService } from "../../src/services/TestStationsService";
 import AWS, { Lambda } from "aws-sdk";
 import AWSMock from "aws-sdk-mock";
 import sinon from "sinon";
 import { LambdaService } from "../../src/services/LambdaService";
+import { TestStationsService } from "../../src/services/TestStationsService";
+import testStationResponse from "../resources/test-stations-200-response.json";
 import mockConfig from "../util/mockConfig";
-const sandbox = sinon.createSandbox();
-AWSMock.setSDKInstance(AWS);
-
 
 describe("TestStationsService", () => {
+    AWSMock.setSDKInstance(AWS);
+    const sandbox = sinon.createSandbox();
     mockConfig();
-    // @ts-ignore
-    const testStationsService: TestStationsService = new TestStationsService(new LambdaMockService());
-    LambdaMockService.populateFunctions();
+    const lambdaMock = jest.fn().mockImplementation(() => {
+        return {
+            invoke: jest.fn().mockResolvedValue(""),
+            validateInvocationResponse: jest.fn().mockReturnValue(testStationResponse)
+        };
+    });
+    const testStationsService: TestStationsService = new TestStationsService(new lambdaMock());
 
     afterEach(()=> {
         sandbox.restore();

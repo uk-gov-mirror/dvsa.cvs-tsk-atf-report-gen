@@ -1,5 +1,4 @@
 import { ReportGenerationService } from "../../src/services/ReportGenerationService";
-import { LambdaMockService } from "../models/LambdaMockService";
 import { TestResultsService } from "../../src/services/TestResultsService";
 import { IActivity } from "../../src/models";
 import * as Excel from "exceljs";
@@ -17,13 +16,12 @@ describe("ReportGenerationService", () => {
     jest.restoreAllMocks();
   });
   mockConfig();
-  const lambdaMockService = new LambdaMockService();
+  const lambdaMockService = jest.fn();
   // @ts-ignore
   const testResultsService: TestResultsService = new TestResultsService(lambdaMockService);
   // @ts-ignore
   const activitiesService: ActivitiesService = new ActivitiesService(lambdaMockService);
   const reportGenerationService: ReportGenerationService = new ReportGenerationService(testResultsService, activitiesService);
-  LambdaMockService.populateFunctions();
 
   context("when generating a template", () => {
             context("and providing the number of rows the template will contain", () => {

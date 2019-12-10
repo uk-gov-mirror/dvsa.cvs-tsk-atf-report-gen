@@ -1,7 +1,6 @@
 import { ACTIVITY_TYPE } from "../../src/assets/enum";
 import { Configuration } from "../../src/utils/Configuration";
 import event from "../resources/queue-event.json";
-import { LambdaMockService } from "../models/LambdaMockService";
 import { NotificationData } from "../../src/utils/generateNotificationData";
 import { SendATFReport } from "../../src/services/SendATFReport";
 import testResultsList from "../resources/test-results-200-response.json";
@@ -16,7 +15,6 @@ describe("notificationData", () => {
         const notificationData: NotificationData = new NotificationData();
         const sendAtfReport: SendATFReport = new SendATFReport();
         const visit: any = JSON.parse(event.Records[0].body);
-        LambdaMockService.populateFunctions();
 
         context("when parsing the visit and the test results", () => {
             it("should return a correct test stations emails", () => {
