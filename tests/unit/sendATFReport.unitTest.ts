@@ -1,6 +1,8 @@
 import { SendATFReport } from "../../src/services/SendATFReport";
+import mockConfig from "../util/mockConfig";
 
 describe("sendATFReport", () => {
+  mockConfig();
   context("ATF report upload to S3 Bucket and sent by email", () => {
     afterEach(() => {
       jest.restoreAllMocks();

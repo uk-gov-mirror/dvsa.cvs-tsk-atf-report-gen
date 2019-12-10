@@ -8,8 +8,10 @@ import testResultsList from "../resources/test-results-200-response.json";
 import testResultsListMultiTest from "../resources/test-results-200-response-multi-test.json";
 import { TestResultsService } from "../../src/services/TestResultsService";
 import waitActivitiesList from "../resources/wait-time-response.json";
+import mockConfig from "../util/mockConfig";
 
 describe("notificationData", () => {
+    mockConfig();
     context("report data generation", () => {
         const notificationData: NotificationData = new NotificationData();
         const sendAtfReport: SendATFReport = new SendATFReport();

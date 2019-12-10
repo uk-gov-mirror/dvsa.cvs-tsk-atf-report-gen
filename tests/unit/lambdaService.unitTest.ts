@@ -1,9 +1,11 @@
 import { LambdaService } from "../../src/services/LambdaService";
 import AWS, { Lambda } from "aws-sdk";
 import AWSMock from "aws-sdk-mock";
+import mockConfig from "../util/mockConfig";
 AWSMock.setSDKInstance(AWS);
 
 describe("When LambdaService ", () => {
+    mockConfig();
     context("validateInvocationResponse", () => {
         context("gets 404", () => {
             it("should return an empty 200", async () => {

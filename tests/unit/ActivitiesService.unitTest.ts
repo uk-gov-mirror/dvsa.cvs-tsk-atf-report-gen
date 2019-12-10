@@ -2,8 +2,10 @@ import { ActivitiesService } from "../../src/services/ActivitiesService";
 import { wrapLambdaResponse } from "../util/responseUtils";
 import waitResponse from "../resources/wait-time-response.json";
 import { LambdaService } from "../../src/services/LambdaService";
+import mockConfig from "../util/mockConfig";
 
 describe("Activities Service", () => {
+  mockConfig();
   describe("getActivities function", () => {
     context("Lambda client returns a single record in expected format", () => {
       it("returns parsed result", async () => {

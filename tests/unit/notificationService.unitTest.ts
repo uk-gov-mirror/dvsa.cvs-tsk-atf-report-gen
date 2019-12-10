@@ -6,9 +6,11 @@ import testResultsList from "../resources/test-results-200-response.json";
 import waitActivitiesList from "../resources/wait-time-response.json";
 import { TEMPLATE_IDS } from "../../src/assets/enum";
 import { TestResultsService } from "../../src/services/TestResultsService";
+import mockConfig from "../util/mockConfig";
 jest.mock("notifications-node-client");
 
 describe("notification service", () => {
+    mockConfig();
     afterAll(() => {
         jest.restoreAllMocks();
         jest.resetModuleRegistry();

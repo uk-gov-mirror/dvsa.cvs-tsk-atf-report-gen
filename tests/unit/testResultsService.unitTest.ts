@@ -5,8 +5,10 @@ import testResults404 from "../resources/test-results-404-response.json";
 import { HTTPError } from "../../src/models/HTTPError";
 import { LambdaService } from "../../src/services/LambdaService";
 import { wrapLambdaErrorResponse, wrapLambdaResponse } from "../util/responseUtils";
+import mockConfig from "../util/mockConfig";
 
 describe("TestResultsService", () => {
+    mockConfig();
     context("when fetching the test results", () => {
         context("and the lambda function exists", () => {
             context("and the response is 200", () => {

@@ -4,11 +4,13 @@ import AWS, { Lambda } from "aws-sdk";
 import AWSMock from "aws-sdk-mock";
 import sinon from "sinon";
 import { LambdaService } from "../../src/services/LambdaService";
+import mockConfig from "../util/mockConfig";
 const sandbox = sinon.createSandbox();
 AWSMock.setSDKInstance(AWS);
 
 
 describe("TestStationsService", () => {
+    mockConfig();
     // @ts-ignore
     const testStationsService: TestStationsService = new TestStationsService(new LambdaMockService());
     LambdaMockService.populateFunctions();

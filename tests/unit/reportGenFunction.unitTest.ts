@@ -2,11 +2,13 @@ import { reportGen } from "../../src/functions/reportGen";
 import mockContext from "aws-lambda-mock-context";
 import { ReportGenerationService } from "../../src/services/ReportGenerationService";
 import { SendATFReport } from "../../src/services/SendATFReport";
+import mockConfig from "../util/mockConfig";
 jest.mock("../../src/services/ReportGenerationService");
 jest.mock("../../src/services/SendATFReport");
 
 describe("Retro Gen Function", () => {
     const ctx = mockContext();
+    mockConfig();
     context("Receiving an empty event (of various types)", () => {
         it("should throw errors (event = {})", async () => {
             expect.assertions(1);

@@ -9,12 +9,14 @@ import testResultResponse from "../resources/test-results-200-response.json";
 import waitResponse from "../resources/wait-time-response.json";
 import hgvTrlTestResultResponse from "../resources/hgv-trl-test-results.json";
 import { ActivitiesService } from "../../src/services/ActivitiesService";
+import mockConfig from "../util/mockConfig";
 
 describe("ReportGenerationService", () => {
   beforeAll(() => {
     jest.resetModuleRegistry();
     jest.restoreAllMocks();
   });
+  mockConfig();
   const lambdaMockService = new LambdaMockService();
   // @ts-ignore
   const testResultsService: TestResultsService = new TestResultsService(lambdaMockService);
