@@ -10,6 +10,7 @@ class NotificationData {
    * @return personalization - Array that contains the entries for each activity and test result
    */
   public generateActivityDetails(visit: any, activitiesList: IActivitiesList[]) {
+    console.log("CHECK HERE ALSO ACTIVITIES LIST", JSON.stringify(activitiesList));
     // Populating the list details.
     const personalization: any = {};
     personalization.testStationPNumber = visit.testStationPNumber;
@@ -21,6 +22,7 @@ class NotificationData {
     personalization.activityDetails = "";
     for (const [index, event] of activitiesList.entries()) {
       if(event.activityType === ACTIVITY_TYPE.TEST) {
+        console.log("CHECK HERE EACH TEST ACTIVITY", JSON.stringify(event.activity));
         const axlesSeats = (event.activity.vehicleType === VEHICLE_TYPES.PSV) ? event.activity.numberOfSeats : event.activity.noOfAxles;
         const vrmTrailerId = (event.activity.vehicleType === VEHICLE_TYPES.TRL) ? event.activity.trailerId : event.activity.vrm;
         personalization.activityDetails += `^#${this.capitalise(event.activityType)} (${vrmTrailerId})
@@ -39,6 +41,7 @@ class NotificationData {
           + `${(index < activitiesList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
       }
     }
+    console.log("CHECK HERE PERSONALIZATION ->", personalization);
     return personalization;
   }
 
