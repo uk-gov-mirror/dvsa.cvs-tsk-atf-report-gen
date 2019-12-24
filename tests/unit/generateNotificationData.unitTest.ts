@@ -44,7 +44,7 @@ describe("notificationData", () => {
                 expect(sendNotificationData.startTime).toEqual("08:47:33");
                 expect(sendNotificationData.endTime).toEqual("15:36:33");
                 expect(sendNotificationData.activityDetails.length).not.toEqual(0);
-                expect(countInstances(sendNotificationData.activityDetails, "---")).toEqual(2);
+                expect(countInstances(sendNotificationData.activityDetails,"---")).toEqual(2);
             });
         });
 
