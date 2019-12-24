@@ -25,6 +25,8 @@ class NotificationData {
         console.log("CHECK HERE EACH TEST ACTIVITY", JSON.stringify(event.activity));
         const axlesSeats = (event.activity.vehicleType === VEHICLE_TYPES.PSV) ? event.activity.numberOfSeats : event.activity.noOfAxles;
         const vrmTrailerId = (event.activity.vehicleType === VEHICLE_TYPES.TRL) ? event.activity.trailerId : event.activity.vrm;
+        console.log("EACH TESTTYPEENDTIMESTAMP", event.activity.testTypes.testTypeEndTimeStamp);
+        console.log("EACH FORMATTEDTESTTYPEENDTIMESTAMP", this.formatDateAndTime(event.activity.testTypes.testTypeEndTimeStamp, "time"));
         personalization.activityDetails += `^#${this.capitalise(event.activityType)} (${vrmTrailerId})
       ^• Time: ${this.formatDateAndTime(event.activity.testTypes.testTypeStartTimestamp, "time")} - ${this.formatDateAndTime(event.activity.testTypes.testTypeEndTimeStamp, "time")}
       ^• Test description: ${event.activity.testTypes.testTypeName}
