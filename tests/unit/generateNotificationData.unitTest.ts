@@ -1,4 +1,4 @@
-import { ACTIVITY_TYPE } from "../../src/assets/enum";
+import {ACTIVITY_TYPE, TIMEZONE} from "../../src/assets/enum";
 import { Configuration } from "../../src/utils/Configuration";
 import event from "../resources/queue-event.json";
 import { NotificationData } from "../../src/utils/generateNotificationData";
@@ -44,7 +44,7 @@ describe("notificationData", () => {
                 expect(sendNotificationData.startTime).toEqual("08:47:33");
                 expect(sendNotificationData.endTime).toEqual("15:36:33");
                 expect(sendNotificationData.activityDetails.length).not.toEqual(0);
-                expect(countInstances(sendNotificationData.activityDetails,"---")).toEqual(2);
+                expect(countInstances(sendNotificationData.activityDetails, "---")).toEqual(2);
             });
         });
 
@@ -72,6 +72,14 @@ describe("notificationData", () => {
             const config = Configuration.getInstance().getGovNotifyConfig();
             expect(config.api_key.length).toBeGreaterThanOrEqual(1);
             expect(config.endpoint.length).toBeGreaterThanOrEqual(1);
+        });
+    });
+
+    context("formatDateAndTime", () => {
+        it("should return the proper formated date", () => {
+            const notificationData = new NotificationData();
+            const date = notificationData.formatDateAndTime("2019-12-24T14:27:58.994Z", "time");
+            expect(date).toEqual("14:27:58");
         });
     });
 });

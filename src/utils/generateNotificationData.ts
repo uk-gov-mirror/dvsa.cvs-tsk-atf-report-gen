@@ -53,7 +53,7 @@ class NotificationData {
    * @param type - "DD/MM/YYYY" for a data | "HH:mm:ss" for time
    * @return the date or the time
    */
-  private formatDateAndTime(param: string, type: string) {
+  public formatDateAndTime(param: string, type: string) {
     switch (type) {
       case "date":
         return moment(param).tz(TIMEZONE.LONDON).format("DD/MM/YYYY");
