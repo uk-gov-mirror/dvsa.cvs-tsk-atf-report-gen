@@ -33,13 +33,11 @@ class SendATFReport {
   public sendATFReport(generationServiceResponse: any, visit: any) {
     // Add testResults and waitActivities in a common list and sort it by startTime
     const activitiesList = this.computeActivitiesList(generationServiceResponse.testResults, generationServiceResponse.waitActivities);
-    console.log("CHECK HERE THE ACTIVITIES LIST ->", JSON.stringify(activitiesList));
     return this.s3BucketService.upload(`cvs-atf-reports-${process.env.BUCKET}`, generationServiceResponse.fileName, generationServiceResponse.fileBuffer)
       .then((result: any) => {
         return this.testStationsService.getTestStationEmail(visit.testStationPNumber)
           .then((response: any) => {
             const sendNotificationData = this.notificationData.generateActivityDetails(visit, activitiesList);
-            console.log("CHECK SENDNOTIFICATIONDAATA HERE ->", sendNotificationData);
             return this.notifyService.sendNotification(sendNotificationData, response[0].testStationEmails).then(() => {
               return result;
             }).catch((error: any) => {
