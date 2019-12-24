@@ -29,6 +29,7 @@ class ReportGenerationService {
             testStatus: STATUSES.SUBMITTED
         })
         .then((testResults: any) => {
+            console.log(console.log("CHECK TEST RESULT HERE ->",testResults.testTypes));
             // Fetch 'wait' activities for this visit activity
             return this.activitiesService.getActivities({
                 testerStaffId: activity.testerStaffId,
