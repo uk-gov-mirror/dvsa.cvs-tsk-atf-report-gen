@@ -1,4 +1,4 @@
-import { ACTIVITY_TYPE, TIMEZONE } from "../../src/assets/enum";
+import { ACTIVITY_TYPE } from "../../src/assets/enum";
 import { Configuration } from "../../src/utils/Configuration";
 import event from "../resources/queue-event.json";
 import { NotificationData } from "../../src/utils/generateNotificationData";
