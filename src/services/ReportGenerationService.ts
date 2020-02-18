@@ -63,16 +63,19 @@ class ReportGenerationService {
                 const testResult: any = testResults[j];
                 const testType: any = testResult.testTypes;
 
-                detailsTemplate.activity.value = (activity.activityType === "visit") ? ACTIVITY_TYPE.TEST : ACTIVITY_TYPE.WAIT_TIME;
-                detailsTemplate.startTime.value = moment(testResult.testStartTimestamp).tz(TIMEZONE.LONDON).format("HH:mm:ss");
-                detailsTemplate.finishTime.value = moment(testResult.testEndTimestamp).tz(TIMEZONE.LONDON).format("HH:mm:ss");
-                detailsTemplate.vrm.value = (testResult.vehicleType === VEHICLE_TYPES.TRL) ? testResult.trailerId : testResult.vrm;
-                detailsTemplate.testDescription.value = testType.testTypeName;
-                detailsTemplate.seatsAndAxles.value = (testResult.vehicleType === VEHICLE_TYPES.PSV) ? testResult.numberOfSeats : testResult.noOfAxles;
-                detailsTemplate.result.value = testType.testResult;
-                detailsTemplate.certificateNumber.value = testType.certificateNumber;
-                detailsTemplate.expiryDate.value = moment(testType.testExpiryDate).tz(TIMEZONE.LONDON).format("DD/MM/YYYY");
-              }
+                            const certificateNumber = (!this.isTestTypeCoifWithAnnualTestOrCoifWithAnnualTestRetest(testType)) ? testType.certificateNumber :
+                                testType.certificateNumber + " (Annual test), " + testType.secondaryCertificateNumber + " (COIF)";
+
+                            detailsTemplate.activity.value = (activity.activityType === "visit") ? ACTIVITY_TYPE.TEST : ACTIVITY_TYPE.WAIT_TIME;
+                            detailsTemplate.startTime.value = moment(testResult.testStartTimestamp).tz(TIMEZONE.LONDON).format("HH:mm:ss");
+                            detailsTemplate.finishTime.value = moment(testResult.testEndTimestamp).tz(TIMEZONE.LONDON).format("HH:mm:ss");
+                            detailsTemplate.vrm.value = (testResult.vehicleType === VEHICLE_TYPES.TRL) ? testResult.trailerId : testResult.vrm;
+                            detailsTemplate.testDescription.value = testType.testTypeName;
+                            detailsTemplate.seatsAndAxles.value = (testResult.vehicleType === VEHICLE_TYPES.PSV) ? testResult.numberOfSeats : testResult.noOfAxles ;
+                            detailsTemplate.result.value = testType.testResult;
+                            detailsTemplate.certificateNumber.value = certificateNumber;
+                            detailsTemplate.expiryDate.value = moment(testType.testExpiryDate).tz(TIMEZONE.LONDON).format("DD/MM/YYYY");
+                        }
 
               return template.workbook.xlsx.writeBuffer()
                 .then((buffer: Excel.Buffer) => {
@@ -196,6 +199,11 @@ class ReportGenerationService {
 
     cell.alignment = { horizontal: "left" };
   }
+
+    private isTestTypeCoifWithAnnualTestOrCoifWithAnnualTestRetest(testType: any) {
+        const testTypeIds = ["142", "175"];
+        return testTypeIds.includes(testType.testTypeId);
+    }
 
 }
 
