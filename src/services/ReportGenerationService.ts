@@ -63,7 +63,7 @@ class ReportGenerationService {
                 const testResult: any = testResults[j];
                 const testType: any = testResult.testTypes;
 
-                const certificateNumber = (!this.isTestTypeCoifWithAnnualTestOrCoifWithAnnualTestRetest(testType)) ? testType.certificateNumber :
+                const certificateNumber = (!ReportGenerationService.isTestTypeCoifWithAnnualTestOrCoifWithAnnualTestRetest(testType)) ? testType.certificateNumber :
                                 testType.certificateNumber + " (Annual test), " + testType.secondaryCertificateNumber + " (COIF)";
 
                 detailsTemplate.activity.value = (activity.activityType === "visit") ? ACTIVITY_TYPE.TEST : ACTIVITY_TYPE.WAIT_TIME;
@@ -204,7 +204,7 @@ class ReportGenerationService {
    * Checks if testType is COIF with annual test or COIF with annual test retest
    * @param testType - the testType for which to check
    */
-  private isTestTypeCoifWithAnnualTestOrCoifWithAnnualTestRetest(testType: any) {
+  public static isTestTypeCoifWithAnnualTestOrCoifWithAnnualTestRetest(testType: any) {
     const testTypeIds = ["142", "175"];
     return testTypeIds.includes(testType.testTypeId);
   }

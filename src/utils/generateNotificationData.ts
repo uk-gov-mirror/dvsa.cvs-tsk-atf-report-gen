@@ -1,6 +1,7 @@
 import moment = require("moment-timezone");
 import { ACTIVITY_TYPE, TIMEZONE, VEHICLE_TYPES } from "../assets/enum";
 import { IActivitiesList } from "../models";
+import { ReportGenerationService } from "../services/ReportGenerationService";
 
 class NotificationData {
   /**
@@ -28,7 +29,8 @@ class NotificationData {
       ^• Test description: ${event.activity.testTypes.testTypeName}
       ^• Axles / Seats: ${axlesSeats}
       ^• Result: ${this.capitalise(event.activity.testTypes.testResult)}`
-          + `${event.activity.testTypes.certificateNumber ? `\n^• Certificate number (Annual test): ${event.activity.testTypes.certificateNumber}` : ""}`
+          + `${event.activity.testTypes.certificateNumber ? `\n^• Certificate number` + (ReportGenerationService.isTestTypeCoifWithAnnualTestOrCoifWithAnnualTestRetest(event.activity.testTypes) ? `(Annual test)` : "") +
+            `: ${event.activity.testTypes.certificateNumber}` : ""}`
           + `${event.activity.testTypes.secondaryCertificateNumber ? `\n^• Certificate number (COIF): ${event.activity.testTypes.secondaryCertificateNumber}` : ""}`
           + `${event.activity.testTypes.testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime(event.activity.testTypes.testExpiryDate, "date")}` : ""}`
           + `${(index < activitiesList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
