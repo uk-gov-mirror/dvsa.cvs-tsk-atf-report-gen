@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "ATF Report generation",
   "main": "handler.js",
+  "engines": {
+    "node": "10.18.1",
+    "npm": "5.6.0"
+  },
   "scripts": {
     "start": "npm run kill:offline && BRANCH=local BUCKET=local SECRET_NAME=feature/atf-report/api-key AWS_XRAY_CONTEXT_MISSING=LOG_ERROR npm run start:offline && node_modules/serverless/bin/serverless invoke local -f main --path tests/resources/queue-event.json",
     "start:offline": "node_modules/gulp/bin/gulp.js start-serverless",
@@ -19,7 +23,7 @@
     "security-checks": "git secrets --scan && git log -p | scanrepo",
     "sonar-scanner": "BRANCH=local export SECRET_NAME=feature/atf-report/api-key && npm run tslint && npm run coverage && sonar-scanner",
     "coverage": "jest --testMatch=\"**/*.*Test.ts\" --coverage",
-    "audit-dep": "npm audit",
+    "audit-dep": "npm audit --json | node_modules/.bin/audit-filter --nsp-config=.nsprc --audit=-",
     "package": "mkdir -p ${ZIP_NAME} && cp package.json package-lock.json ${ZIP_NAME}/ && cp -r .build/src/* ${ZIP_NAME}/ && cd ${ZIP_NAME} && npm ci --production && rm package.json package-lock.json && zip -qr ../${ZIP_NAME}.zip .",
     "tools-setup": "echo 'nothing to do'"
   },
@@ -47,6 +51,7 @@
     "@types/node": "^10.17.6",
     "@types/request-promise": "^4.1.45",
     "@types/sinon": "^7.5.1",
+    "audit-filter": "^0.5.0",
     "aws-lambda-mock-context": "^3.2.1",
     "aws-sdk-mock": "^4.5.0",
     "chai": "^4.2.0",
