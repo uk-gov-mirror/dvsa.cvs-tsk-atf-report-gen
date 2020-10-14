@@ -18,6 +18,7 @@ describe("sendATFReport", () => {
       testStationEmail: "teststationname@dvsa.gov.uk",
       testStationType: "gvts",
       testerName: "Gica",
+      testerEmail: "test@dvsa.gov.uk",
       testerStaffId: "1",
       startTime: "2019-01-14T08:47:33.987Z",
       endTime: "2019-01-14T15:36:33.987Z"
@@ -99,10 +100,12 @@ describe("sendATFReport", () => {
           ],
           testStationId: "9"
         }]);
-        expect.assertions(2);
+        expect.assertions(3);
         return sendATFReport.sendATFReport(generationServiceResponse, visit).then((response: any) => {
-          const notifyCallArgs = notifyMock.mock.calls[0];
-          expect(notifyCallArgs[1]).toEqual(["teststationname@dvsa.gov.uk"]);
+          const notifyCallArgsTestStation = notifyMock.mock.calls[0];
+          const notifyCallArgsTester = notifyMock.mock.calls[1];
+          expect(notifyCallArgsTestStation[1]).toEqual(["teststationname@dvsa.gov.uk"]);
+          expect(notifyCallArgsTester[1]).toEqual(["test@dvsa.gov.uk"]);
           expect(response).toEqual("details from s3");
         });
       });
