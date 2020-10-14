@@ -43,6 +43,7 @@ class SendATFReport {
       this.notifyService = new NotificationService(new NotifyClient(this.apiKey));
     }
     await this.notifyService.sendNotification(sendNotificationData, response[0].testStationEmails);
+    await this.notifyService.sendNotification(sendNotificationData, [visit.testerEmail]);
     return report;
   }
 
