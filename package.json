@@ -20,11 +20,11 @@
     "test-i": "BRANCH=local jest --testMatch=\"**/*.intTest.ts\" --runInBand --passWithNoTests",
     "tslint": "tslint src/**/*.ts tests/**/*.ts",
     "prepush": "npm test && npm run tslint",
-    "security-checks": "git secrets --scan && git log -p | scanrepo",
-    "sonar-scanner": "BRANCH=local export SECRET_NAME=feature/atf-report/api-key && npm run tslint && npm run coverage && sonar-scanner",
+    "sonar-scanner": "BRANCH=local export SECRET_NAME=feature/atf-report/api-key && AWS_XRAY_CONTEXT_MISSING=LOG_ERROR npm run tslint && AWS_XRAY_CONTEXT_MISSING=LOG_ERROR npm run coverage && sonar-scanner",
     "coverage": "jest --testMatch=\"**/*.*Test.ts\" --coverage",
     "audit-dep": "npm audit --json | node_modules/.bin/audit-filter --nsp-config=.nsprc --audit=-",
     "package": "mkdir -p ${ZIP_NAME} && cp package.json package-lock.json ${ZIP_NAME}/ && cp -r .build/src/* ${ZIP_NAME}/ && cd ${ZIP_NAME} && npm ci --production && rm package.json package-lock.json && zip -qr ../${ZIP_NAME}.zip .",
+    "security-checks": "npm audit --audit-level=critical && git secrets --register-aws && git secrets --scan && git log -p | scanrepo",
     "tools-setup": "echo 'nothing to do'"
   },
   "author": "",
