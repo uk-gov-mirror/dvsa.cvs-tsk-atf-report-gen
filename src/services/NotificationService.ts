@@ -21,7 +21,7 @@ class NotificationService {
    */
   public sendNotification(params: any, emails: string[]): Promise<any[]> {
     const emailDetails = {
-      personalisation: params
+      personalisation: params,
     };
     const sendEmailPromise = [];
     for (const email of emails) {
@@ -30,11 +30,10 @@ class NotificationService {
     }
 
     console.log(`Sent email using ${TEMPLATE_IDS.ATF_REPORT_TEMPLATE} templateId for test station PNumber ${params.testStationPNumber}`);
-    return Promise.all(sendEmailPromise)
-      .catch((error: AWSError) => {
-        console.error(error);
-        throw new HTTPError(error.statusCode, error.message);
-      });
+    return Promise.all(sendEmailPromise).catch((error: AWSError) => {
+      console.error(error);
+      throw new HTTPError(error.statusCode, error.message);
+    });
   }
 }
 

@@ -31,7 +31,7 @@ class S3BucketMockService {
         message: "The specified bucket does not exist.",
         code: "NoSuchBucket",
         statusCode: 404,
-        retryable: false
+        retryable: false,
       });
 
       throw error;
@@ -41,7 +41,7 @@ class S3BucketMockService {
       Location: `http://localhost:7000/${bucketName}/${fileName}`,
       ETag: "621c9c14d75958d4c3ed8ad77c80cde1",
       Bucket: bucketName,
-      Key: fileName
+      Key: fileName,
     };
 
     return response;

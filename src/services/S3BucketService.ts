@@ -28,12 +28,14 @@ class S3BucketService {
    * @param metadata - additional metadata
    */
   public upload(bucketName: string, fileName: string, content: Buffer | Uint8Array | Blob | string | Readable, metadata?: Metadata): Promise<SendData> {
-    return this.s3Client.upload({
-      Bucket: bucketName,
-      Key: `${process.env.BRANCH}/${fileName}`,
-      Body: content,
-      Metadata: metadata
-    }).promise();
+    return this.s3Client
+      .upload({
+        Bucket: bucketName,
+        Key: `${process.env.BRANCH}/${fileName}`,
+        Body: content,
+        Metadata: metadata,
+      })
+      .promise();
   }
 }
 

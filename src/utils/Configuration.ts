@@ -9,7 +9,6 @@ import { GetSecretValueRequest, GetSecretValueResponse } from "aws-sdk/clients/s
 const AWSXRay = require("aws-xray-sdk");
 
 class Configuration {
-
   private static instance: Configuration;
   private readonly config: IConfig;
   private secretsClient: SecretsManager;
@@ -30,7 +29,7 @@ class Configuration {
         const captureGroups: RegExpExecArray = envRegex.exec(match) as RegExpExecArray;
 
         // Insert the environment variable if available. If not, insert placeholder. If no placeholder, leave it as is.
-        stringifiedConfig = stringifiedConfig.replace(match, (process.env[captureGroups[1]] || captureGroups[2] || captureGroups[1]));
+        stringifiedConfig = stringifiedConfig.replace(match, process.env[captureGroups[1]] || captureGroups[2] || captureGroups[1]);
       });
     }
 
@@ -59,7 +58,7 @@ class Configuration {
     }
 
     // Not defining BRANCH will default to local
-    const env: string = (!process.env.BRANCH || process.env.BRANCH === "local") ? "local" : "remote";
+    const env: string = !process.env.BRANCH || process.env.BRANCH === "local" ? "local" : "remote";
 
     return this.config.s3[env];
   }
@@ -74,7 +73,7 @@ class Configuration {
     }
 
     // Not defining BRANCH will default to local
-    const env: string = (!process.env.BRANCH || process.env.BRANCH === "local") ? "local" : "remote";
+    const env: string = !process.env.BRANCH || process.env.BRANCH === "local" ? "local" : "remote";
 
     return this.config.invoke[env];
   }
@@ -102,7 +101,7 @@ class Configuration {
 
     if (process.env.SECRET_NAME) {
       const req: GetSecretValueRequest = {
-        SecretId: process.env.SECRET_NAME
+        SecretId: process.env.SECRET_NAME,
       };
       const resp: GetSecretValueResponse = await this.secretsClient.getSecretValue(req).promise();
       try {

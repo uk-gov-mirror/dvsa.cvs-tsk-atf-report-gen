@@ -19,7 +19,7 @@ Environment variable injection is possible with the syntax:
 
 ## Running the project
 
-Please install and run the following securiy programs as part of your development process -
+Please install and run the following security programs as part of your development process -
 [git-secrets](https://github.com/awslabs/git-secrets)
 After installing, do a one-time set up with `git secrets --register-aws`. Run with `git secrets --scan`.
 You will also need to install [repo-security-scanner](https://github.com/UKHomeOffice/repo-security-scanner)

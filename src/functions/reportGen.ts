@@ -28,8 +28,9 @@ const reportGen: Handler = async (event: any, context?: Context, callback?: Call
 
   event.Records.forEach((record: any) => {
     const visit: any = JSON.parse(record.body);
-    const retroUploadPromise = reportService.generateATFReport(visit)
-      .then((generationServiceResponse: { fileName: string, fileBuffer: Buffer, testResults: any }) => {
+    const retroUploadPromise = reportService
+      .generateATFReport(visit)
+      .then((generationServiceResponse: { fileName: string; fileBuffer: Buffer; testResults: any }) => {
         return sendATFReport.sendATFReport(generationServiceResponse, visit);
       })
       .catch((error: any) => {
@@ -40,11 +41,10 @@ const reportGen: Handler = async (event: any, context?: Context, callback?: Call
     retroUploadPromises.push(retroUploadPromise);
   });
 
-  return Promise.all(retroUploadPromises)
-    .catch((error: AWSError) => {
-      console.error(error);
-      throw error;
-    });
+  return Promise.all(retroUploadPromises).catch((error: AWSError) => {
+    console.error(error);
+    throw error;
+  });
 };
 
 export { reportGen };

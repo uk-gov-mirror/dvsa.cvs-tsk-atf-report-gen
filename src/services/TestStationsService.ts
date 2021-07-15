@@ -27,15 +27,17 @@ class TestStationsService {
         httpMethod: "GET",
         path: `/test-stations/${testStationPNumber}`,
         pathParameters: {
-          testStationPNumber
-        }
+          testStationPNumber,
+        },
       }),
     };
-    return this.lambdaClient.invoke(invokeParams)
+    return this.lambdaClient
+      .invoke(invokeParams)
       .then((response: Lambda.Types.InvocationResponse) => {
         const payload: any = this.lambdaClient.validateInvocationResponse(response); // Response validation
         return JSON.parse(payload.body); // Response conversion
-      }).catch((error) => {
+      })
+      .catch((error) => {
         console.log(error);
         throw new HTTPError(500, error.message);
       });

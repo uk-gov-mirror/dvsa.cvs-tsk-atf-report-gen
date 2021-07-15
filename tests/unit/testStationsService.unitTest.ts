@@ -14,7 +14,7 @@ describe("TestStationsService", () => {
   const lambdaMock = jest.fn().mockImplementation(() => {
     return {
       invoke: jest.fn().mockResolvedValue(""),
-      validateInvocationResponse: jest.fn().mockReturnValue(testStationResponse)
+      validateInvocationResponse: jest.fn().mockReturnValue(testStationResponse),
     };
   });
   const testStationsService: TestStationsService = new TestStationsService(new lambdaMock());

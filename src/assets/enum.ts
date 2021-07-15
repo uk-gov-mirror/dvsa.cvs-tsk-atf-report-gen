@@ -10,25 +10,25 @@ export enum ERRORS {
   EVENT_IS_EMPTY = "Event is empty",
   SECRET_ENV_VAR_NOT_EXIST = "SECRET_NAME environment variable does not exist.",
   SECRET_FILE_NOT_EXIST = "The secret file does not exist.",
-  NOTIFY_CONFIG_NOT_SET = "The GovNotify configuration not set."
+  NOTIFY_CONFIG_NOT_SET = "The GovNotify configuration not set.",
 }
 
 export enum ACTIVITY_TYPE {
   TEST = "Test",
   WAIT_TIME = "Wait Time",
-  TIME_NOT_TESTING = "Time not Testing"
+  TIME_NOT_TESTING = "Time not Testing",
 }
 
 export enum TIMEZONE {
-  LONDON = "Europe/London"
+  LONDON = "Europe/London",
 }
 
 export enum STATUSES {
-  SUBMITTED = "submitted"
+  SUBMITTED = "submitted",
 }
 
 export enum VEHICLE_TYPES {
   PSV = "psv",
   HGV = "hgv",
-  TRL = "trl"
+  TRL = "trl",
 }

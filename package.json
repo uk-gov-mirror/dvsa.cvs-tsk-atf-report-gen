@@ -4,27 +4,25 @@
   "description": "ATF Report generation",
   "main": "handler.js",
   "engines": {
-    "node": "10.18.1",
+    "node": "14.*",
     "npm": "5.6.0"
   },
   "scripts": {
-    "start": "npm run kill:offline && BRANCH=local BUCKET=local SECRET_NAME=feature/atf-report/api-key AWS_XRAY_CONTEXT_MISSING=LOG_ERROR npm run start:offline && serverless invoke local -f main --path tests/resources/queue-event.json",
-    "start:offline": "gulp start-serverless",
-    "kill:offline": "gulp kill-serverless",
+    "start": "BRANCH=local BUCKET=local SECRET_NAME=feature/atf-report/api-key AWS_XRAY_CONTEXT_MISSING=LOG_ERROR serverless invoke local -f main --path tests/resources/queue-event.json",
     "start:docker": "docker-compose -f docker-compose.yml up -d",
     "build": "node_modules/typescript/bin/tsc --rootDir ./ --outDir .build --sourceMap false && npm run build:copy",
     "build:dev": "node_modules/typescript/bin/tsc && npm run build:copy",
     "build:copy": "find src -type f \\( -name \"*.yml\" -or -name \"*.json\" -or -name \"*.xlsx\" \\) | cpio -pdm .build && find tests -type f \\( -name \"*.yml\" -or -name \"*.json\" \\)  | cpio -pdm .build",
     "build:docker": "docker-compose -f docker-compose.yml up -d --build",
-    "test": "AWS_XRAY_CONTEXT_MISSING=LOG_ERROR BRANCH=local SLS_DEBUG=* SECRET_NAME=feature/atf-report/api-key jest --testMatch=\"**/*.unitTest.ts\"",
-    "test-i": "BRANCH=local jest --testMatch=\"**/*.intTest.ts\" --runInBand --passWithNoTests",
-    "tslint": "tslint src/**/*.ts tests/**/*.ts",
-    "prepush": "npm run coverage && npm run build",
+    "test:unit": "AWS_XRAY_CONTEXT_MISSING=LOG_ERROR BRANCH=local SLS_DEBUG=* SECRET_NAME=feature/atf-report/api-key jest --testMatch=\"**/*.unitTest.ts\" --runInBand --detectOpenHandles",
+    "test": "npm run test:unit -- --coverage",
+    "test-i": "echo 'nothing to do'",
+    "lint": "tslint src/**/*.ts tests/**/*.ts",
+    "format": "prettier --write .",
+    "prepush": "npm run test && npm run build",
     "security-checks": "git secrets --scan && git log -p | scanrepo",
-    "sonar-scanner": "BRANCH=local export SECRET_NAME=feature/atf-report/api-key && npm run tslint && npm run coverage && sonar-scanner",
-    "coverage": "jest --testMatch=\"**/*.unitTest.ts\" --coverage",
-    "audit:check": "npm audit --json | node_modules/.bin/audit-filter --nsp-config=.nsprc --audit=-",
-    "audit-dep": "npm audit",
+    "sonar-scanner": "sonar-scanner",
+    "audit": "npm audit",
     "package": "mkdir -p ${ZIP_NAME} && cp package.json package-lock.json ${ZIP_NAME}/ && cp -r .build/src/* ${ZIP_NAME}/ && cd ${ZIP_NAME} && npm ci --production && rm package.json package-lock.json && zip -qr ../${ZIP_NAME}.zip .",
     "tools-setup": "echo 'nothing to do'"
   },
@@ -35,7 +33,6 @@
     "aws-sdk": "^2.581.0",
     "aws-xray-sdk": "^2.5.0",
     "exceljs": "^1.8.0",
-    "fsevents": "^2.3.2",
     "js-yaml": "^3.13.1",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.27",
@@ -44,6 +41,8 @@
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
+    "@commitlint/cli": "^13.1.0",
+    "@commitlint/config-conventional": "^13.1.0",
     "@types/aws-lambda": "^8.10.36",
     "@types/chai": "^4.2.5",
     "@types/jest": "^25.2.1",
@@ -57,11 +56,11 @@
     "aws-lambda-mock-context": "^3.2.1",
     "aws-sdk-mock": "^4.5.0",
     "chai": "^4.2.0",
-    "gulp": "^4.0.2",
     "husky": "^3.0.9",
     "jest": "^26.6.3",
     "jest-plugin-context": "^2.9.0",
     "nyc": "^14.1.1",
+    "prettier": "^2.3.2",
     "serverless": "^2.20.0",
     "serverless-dependency-invoke": "^0.0.10",
     "serverless-offline": "^5.12.1",
@@ -86,7 +85,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run security-checks && npm audit && npm run tslint",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "npm run security-checks && npm run audit && npm run lint",
       "pre-push": "npm run prepush"
     }
   }

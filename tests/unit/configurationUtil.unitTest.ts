@@ -59,7 +59,7 @@ describe("ConfigurationUtil", () => {
       const fakeResp: GetSecretValueResponse = {
         SecretString: `notify:
   endpoint: asdfg
-  apiKey: asfg`
+  apiKey: asfg`,
       };
       const spy: SinonSpy = fake.resolves(fakeResp);
       AWSMock.setSDKInstance(AWS);

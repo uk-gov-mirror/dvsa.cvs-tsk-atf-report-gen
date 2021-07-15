@@ -21,22 +21,23 @@ class NotificationData {
     personalization.activityDetails = "";
     for (const [index, event] of activitiesList.entries()) {
       if (event.activityType === ACTIVITY_TYPE.TEST) {
-        const axlesSeats = (event.activity.vehicleType === VEHICLE_TYPES.PSV) ? event.activity.numberOfSeats : event.activity.noOfAxles;
-        const vrmTrailerId = (event.activity.vehicleType === VEHICLE_TYPES.TRL) ? event.activity.trailerId : event.activity.vrm;
-        personalization.activityDetails += `^#${this.capitalise(event.activityType)} (${vrmTrailerId})
+        const axlesSeats = event.activity.vehicleType === VEHICLE_TYPES.PSV ? event.activity.numberOfSeats : event.activity.noOfAxles;
+        const vrmTrailerId = event.activity.vehicleType === VEHICLE_TYPES.TRL ? event.activity.trailerId : event.activity.vrm;
+        personalization.activityDetails +=
+          `^#${this.capitalise(event.activityType)} (${vrmTrailerId})
       ^• Time: ${this.formatDateAndTime(event.activity.testStartTimestamp, "time")} - ${this.formatDateAndTime(event.activity.testEndTimestamp, "time")}
       ^• Test description: ${event.activity.testTypes.testTypeName}
       ^• Axles / Seats: ${axlesSeats}
-      ^• Result: ${this.capitalise(event.activity.testTypes.testResult)}`
-          + `${event.activity.testTypes.certificateNumber ? `\n^• Certificate number: ${event.activity.testTypes.certificateNumber}` : ""}`
-          + `${event.activity.testTypes.testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime(event.activity.testTypes.testExpiryDate, "date")}` : ""}`
-          + `${(index < activitiesList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
+      ^• Result: ${this.capitalise(event.activity.testTypes.testResult)}` +
+          `${event.activity.testTypes.certificateNumber ? `\n^• Certificate number: ${event.activity.testTypes.certificateNumber}` : ""}` +
+          `${event.activity.testTypes.testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime(event.activity.testTypes.testExpiryDate, "date")}` : ""}` +
+          `${index < activitiesList.length - 1 ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
       }
       if (event.activityType === ACTIVITY_TYPE.TIME_NOT_TESTING) {
-        personalization.activityDetails += `^#${this.capitalise(ACTIVITY_TYPE.TIME_NOT_TESTING)}
+        personalization.activityDetails +=
+          `^#${this.capitalise(ACTIVITY_TYPE.TIME_NOT_TESTING)}
       ^• Time: ${this.formatDateAndTime(event.activity.startTime, "time")} - ${this.formatDateAndTime(event.activity.endTime, "time")}
-      ^• Reason: ${event.activity.waitReason}`
-          + `${(index < activitiesList.length - 1) ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
+      ^• Reason: ${event.activity.waitReason}` + `${index < activitiesList.length - 1 ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
       }
     }
     return personalization;

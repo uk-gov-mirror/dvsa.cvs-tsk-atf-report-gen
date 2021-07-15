@@ -14,16 +14,15 @@ provider:
 
 plugins:
   - serverless-plugin-typescript
-  - serverless-offline
   - serverless-plugin-tracing
 
 functions:
   main:
     handler: src/handler.handler
     events:
-    - sqs:
-        arn: arn:aws:sqs:region:XXXXXX:retro-gen-q
-        batchSize: 10
+      - sqs:
+          arn: arn:aws:sqs:region:XXXXXX:retro-gen-q
+          batchSize: 10
 
 resources:
   Resources:

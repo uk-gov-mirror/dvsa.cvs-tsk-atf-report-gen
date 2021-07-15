@@ -29,7 +29,7 @@ describe("notification service", () => {
         const sendEmailMock = jest.fn();
         const notifyClientMock = jest.fn().mockImplementation(() => {
           return {
-            sendEmail: sendEmailMock
+            sendEmail: sendEmailMock,
           };
         });
         const notifyService: NotificationService = new NotificationService(new notifyClientMock());

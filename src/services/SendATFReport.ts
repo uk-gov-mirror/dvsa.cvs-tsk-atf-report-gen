@@ -60,7 +60,7 @@ class SendATFReport {
       const act: IActivitiesList = {
         startTime: testResult.testTypes.testTypeStartTimestamp,
         activityType: ACTIVITY_TYPE.TEST,
-        activity: testResult
+        activity: testResult,
       };
       list.push(act);
     }
@@ -69,7 +69,7 @@ class SendATFReport {
       const act: IActivitiesList = {
         startTime: waitTime.startTime,
         activityType: ACTIVITY_TYPE.TIME_NOT_TESTING,
-        activity: waitTime
+        activity: waitTime,
       };
       list.push(act);
     }

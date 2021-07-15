@@ -12,16 +12,18 @@ describe("Activities Service", () => {
         const mockLambdaService = jest.fn().mockImplementation(() => {
           return {
             invoke: () => Promise.resolve(wrapLambdaResponse(JSON.stringify(waitResponse))),
-            validateInvocationResponse: LambdaService.prototype.validateInvocationResponse
+            validateInvocationResponse: LambdaService.prototype.validateInvocationResponse,
           };
         });
         const activityService = new ActivitiesService(new mockLambdaService());
         const result = await activityService.getActivities({});
-        expect(result).toEqual([{
-          startTime: "2019-01-14T10:42:33.987Z",
-          endTime: "2019-01-14T10:48:33.987Z",
-          waitReason: "Break"
-        }]);
+        expect(result).toEqual([
+          {
+            startTime: "2019-01-14T10:42:33.987Z",
+            endTime: "2019-01-14T10:48:33.987Z",
+            waitReason: "Break",
+          },
+        ]);
       });
     });
 
@@ -36,8 +38,7 @@ describe("Activities Service", () => {
         const mockLambdaService = jest.fn().mockImplementation(() => {
           return {
             invoke: () => Promise.resolve(wrapLambdaResponse(JSON.stringify(myEvent))),
-            validateInvocationResponse: LambdaService.prototype.validateInvocationResponse
-
+            validateInvocationResponse: LambdaService.prototype.validateInvocationResponse,
           };
         });
         const activityService = new ActivitiesService(new mockLambdaService());

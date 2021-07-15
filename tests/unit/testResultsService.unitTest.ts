@@ -53,9 +53,9 @@ describe("TestResultsService", () => {
                         longitudinal: "front",
                         rowNumber: null,
                         lateral: null,
-                        seatNumber: null
+                        seatNumber: null,
                       },
-                      notes: "None"
+                      notes: "None",
                     },
                     itemNumber: 1,
                     deficiencyRef: "1.1.a",
@@ -64,30 +64,29 @@ describe("TestResultsService", () => {
                     imDescription: "Registration Plate",
                     deficiencyId: "a",
                     itemDescription: "A registration plate:",
-                    imNumber: 1
-                  }
+                    imNumber: 1,
+                  },
                 ],
                 name: "Annual test",
                 certificateLink: "http://dvsagov.co.uk",
-                testResult: "pass"
+                testResult: "pass",
               },
-              vin: "XMGDE02FS0H012345"
-            }
+              vin: "XMGDE02FS0H012345",
+            },
           ];
           const mockLambdaService = jest.fn().mockImplementation(() => {
             return {
               invoke: () => {
                 return Promise.resolve(wrapLambdaResponse(testResults200));
               },
-              validateInvocationResponse: (input: any) => input.Payload
+              validateInvocationResponse: (input: any) => input.Payload,
             };
           });
           const testResultsService: TestResultsService = new TestResultsService(new mockLambdaService());
           expect.assertions(1);
-          return testResultsService.getTestResults({})
-            .then((result: any) => {
-              expect(result).toEqual(expectedResult);
-            });
+          return testResultsService.getTestResults({}).then((result: any) => {
+            expect(result).toEqual(expectedResult);
+          });
         });
       });
 
@@ -98,15 +97,14 @@ describe("TestResultsService", () => {
               invoke: () => {
                 return Promise.reject(new HTTPError(418, "It broke!"));
               },
-              validateInvocationResponse: (input: any) => input.Payload
+              validateInvocationResponse: (input: any) => input.Payload,
             };
           });
           const testResultsService: TestResultsService = new TestResultsService(new mockLambdaService());
-          return testResultsService.getTestResults({})
-            .catch((error: HTTPError) => {
-              expect((error as any).body).toEqual("It broke!");
-              expect(error).toBeInstanceOf(HTTPError);
-            });
+          return testResultsService.getTestResults({}).catch((error: HTTPError) => {
+            expect((error as any).body).toEqual("It broke!");
+            expect(error).toBeInstanceOf(HTTPError);
+          });
         });
       });
 
@@ -117,15 +115,14 @@ describe("TestResultsService", () => {
               invoke: () => {
                 return Promise.resolve(wrapLambdaErrorResponse(404, testResults404));
               },
-              validateInvocationResponse: LambdaService.prototype.validateInvocationResponse
+              validateInvocationResponse: LambdaService.prototype.validateInvocationResponse,
             };
           });
           const testResultsService: TestResultsService = new TestResultsService(new mockLambdaService());
-          return testResultsService.getTestResults({})
-            .catch((error: Error) => {
-              expect(error.message).toContain("Lambda invocation returned error");
-              expect(error).toBeInstanceOf(Error);
-            });
+          return testResultsService.getTestResults({}).catch((error: Error) => {
+            expect(error.message).toContain("Lambda invocation returned error");
+            expect(error).toBeInstanceOf(Error);
+          });
         });
       });
 
@@ -136,16 +133,15 @@ describe("TestResultsService", () => {
               invoke: () => {
                 return Promise.resolve(wrapLambdaResponse(testResults200EmptyBody));
               },
-              validateInvocationResponse: (input: any) => input.Payload
+              validateInvocationResponse: (input: any) => input.Payload,
             };
           });
           const testResultsService: TestResultsService = new TestResultsService(new mockLambdaService());
           expect.assertions(1);
-          return testResultsService.getTestResults({})
-            .then((result: any) => {
-              const expectedResult: any = [];
-              expect(result).toEqual(expectedResult);
-            });
+          return testResultsService.getTestResults({}).then((result: any) => {
+            const expectedResult: any = [];
+            expect(result).toEqual(expectedResult);
+          });
         });
       });
     });

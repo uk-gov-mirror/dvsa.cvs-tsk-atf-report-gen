@@ -1,7 +1,7 @@
 declare enum StationType {
   ATF = "atf",
   GVTS = "gvts",
-  HQ = "hq"
+  HQ = "hq",
 }
 
 interface IS3Config {
@@ -69,8 +69,8 @@ interface ITestResults {
 }
 
 interface IInvokeConfig {
-  params: { apiVersion: string; endpoint?: string; };
-  functions: { testResults: { name: string }, testStations: { name: string; mock: string }, getActivities: { name: string } };
+  params: { apiVersion: string; endpoint?: string };
+  functions: { testResults: { name: string }; testStations: { name: string; mock: string }; getActivities: { name: string } };
 }
 
 interface IActivitiesList {
@@ -81,8 +81,8 @@ interface IActivitiesList {
 
 interface ISecretConfig {
   notify: {
-    endpoint: string
-    api_key: string
+    endpoint: string;
+    api_key: string;
   };
 }
 
