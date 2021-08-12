@@ -16,7 +16,9 @@ describe("ReportGenerationService", () => {
     jest.restoreAllMocks();
     jest.setTimeout(10000);
   });
-  afterAll(() => jest.setTimeout(5000));
+  afterAll(() => {
+    jest.setTimeout(5000);
+  });
   mockConfig();
   const lambdaMockService = jest.fn();
   // @ts-ignore
@@ -80,7 +82,7 @@ describe("ReportGenerationService", () => {
       const mockTestResultsService = jest.fn().mockImplementation(() => {
         return {
           getTestResults: () => {
-            return Promise.resolve(TestResultsService.prototype.expandTestResults(JSON.parse(testResultResponse.body)));
+            return Promise.resolve(JSON.parse(testResultResponse.body));
           },
         };
       });
@@ -117,7 +119,7 @@ describe("ReportGenerationService", () => {
         const mockTestResultsService = jest.fn().mockImplementation(() => {
           return {
             getTestResults: () => {
-              return Promise.resolve(TestResultsService.prototype.expandTestResults(JSON.parse(hgvTrlTestResultResponse.body)));
+              return Promise.resolve(JSON.parse(hgvTrlTestResultResponse.body));
             },
           };
         });
