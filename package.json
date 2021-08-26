@@ -62,7 +62,6 @@
     "nyc": "^14.1.1",
     "prettier": "^2.3.2",
     "serverless": "^2.20.0",
-    "serverless-dependency-invoke": "^0.0.10",
     "serverless-offline": "^5.12.1",
     "serverless-plugin-tracing": "^2.0.0",
     "serverless-plugin-typescript": "^1.1.9",
