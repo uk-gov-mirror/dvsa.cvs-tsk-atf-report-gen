@@ -11,9 +11,9 @@ class HTTPError extends Error {
    * @param body - the response body
    * @param headers - optional - the response headers
    */
-  constructor(statusCode: number, body: string) {
+  constructor(statusCode: number | undefined, body: string) {
     super();
-    this.statusCode = statusCode;
+    this.statusCode = statusCode ? statusCode : 500;
     this.body = body;
   }
 }

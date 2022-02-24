@@ -108,6 +108,25 @@ describe("TestResultsService", () => {
         });
       });
 
+      context("and the lambda service throws an unknown error", () => {
+        it("should throw bubble up the error", () => {
+          const mockLambdaService = jest.fn().mockImplementation(() => {
+            return {
+              invoke: () => {
+                return Promise.reject(new HTTPError(undefined, "It broke!"));
+              },
+              validateInvocationResponse: (input: any) => input.Payload,
+            };
+          });
+          const testResultsService: TestResultsService = new TestResultsService(new mockLambdaService());
+          return testResultsService.getTestResults({}).catch((error: HTTPError) => {
+            expect((error as any).body).toEqual("It broke!");
+            expect(error).toBeInstanceOf(HTTPError);
+            expect((error as any).statusCode).toEqual(500);
+          });
+        });
+      });
+
       context("and the response is non-200", () => {
         it("should throw an error", () => {
           const mockLambdaService = jest.fn().mockImplementation(() => {
