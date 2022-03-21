@@ -61,7 +61,7 @@
     "jest-plugin-context": "^2.9.0",
     "nyc": "^14.1.1",
     "prettier": "^2.3.2",
-    "serverless": "^2.20.0",
+    "serverless": "^3.7.1",
     "serverless-offline": "^5.12.1",
     "serverless-plugin-tracing": "^2.0.0",
     "serverless-plugin-typescript": "^1.1.9",
