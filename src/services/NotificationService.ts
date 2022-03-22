@@ -1,17 +1,19 @@
-import { TEMPLATE_IDS } from "../assets/enum";
 import { AWSError } from "aws-sdk";
 import { HTTPError } from "../models/HTTPError";
 // @ts-ignore
 import { NotifyClient } from "notifications-node-client";
+import { Configuration } from "../utils/Configuration";
 
 /**
  * Service class for Certificate Notifications
  */
 class NotificationService {
   private readonly notifyClient: NotifyClient;
+  private readonly config: Configuration;
 
   constructor(notifyClient: NotifyClient) {
     this.notifyClient = notifyClient;
+    this.config = Configuration.getInstance();
   }
 
   /**
@@ -19,17 +21,19 @@ class NotificationService {
    * @param params - personalization details,email and certificate
    * @param emails - emails to send to
    */
-  public sendNotification(params: any, emails: string[]): Promise<any[]> {
+  public async sendNotification(params: any, emails: string[]): Promise<any[]> {
+    const templateId: string = await this.config.getTemplateIdFromEV();
     const emailDetails = {
       personalisation: params,
     };
     const sendEmailPromise = [];
+
     for (const email of emails) {
-      const sendEmail = this.notifyClient.sendEmail(TEMPLATE_IDS.ATF_REPORT_TEMPLATE, email, emailDetails);
+      const sendEmail = this.notifyClient.sendEmail(templateId, email, emailDetails);
       sendEmailPromise.push(sendEmail);
     }
 
-    console.log(`Sent email using ${TEMPLATE_IDS.ATF_REPORT_TEMPLATE} templateId for test station PNumber ${params.testStationPNumber}`);
+    console.log(`Sent email using ${templateId} templateId for test station PNumber ${params.testStationPNumber}`);
     return Promise.all(sendEmailPromise).catch((error: AWSError) => {
       console.error(error);
       throw new HTTPError(error.statusCode, error.message);

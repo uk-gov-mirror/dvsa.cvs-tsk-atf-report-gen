@@ -14,7 +14,7 @@ class Configuration {
   private secretsClient: SecretsManager;
   private readonly secretPath = "../config/secrets.yml";
 
-  private constructor(configPath: string) {
+  constructor(configPath: string) {
     this.secretsClient = AWSXRay.captureAWSClient(new SecretsManager({ region: "eu-west-1" }));
     this.config = yml.readSync(configPath);
 
@@ -90,6 +90,24 @@ class Configuration {
       await this.setSecrets();
     }
     return this.config.notify;
+  }
+
+  /**
+   * Retrieves the templateId from config file when running locally, else environment variable
+   */
+  public async getTemplateIdFromEV(): Promise<string> {
+    if (!process.env.BRANCH || process.env.BRANCH === "local") {
+      if (!this.config.notify.templateId) {
+        throw new Error(ERRORS.TEMPLATE_ID_ENV_VAR_NOT_EXIST);
+      } else {
+        return this.config.notify.templateId;
+      }
+    } else {
+      if (!process.env.TEMPLATE_ID) {
+        throw new Error(ERRORS.TEMPLATE_ID_ENV_VAR_NOT_EXIST);
+      }
+      return process.env.TEMPLATE_ID;
+    }
   }
 
   /**

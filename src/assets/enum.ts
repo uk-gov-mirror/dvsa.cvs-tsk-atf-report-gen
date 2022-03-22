@@ -1,7 +1,3 @@
-export enum TEMPLATE_IDS {
-  ATF_REPORT_TEMPLATE = "368a62fa-f826-4be6-92c3-c555e3d7e0a3",
-}
-
 export enum ERRORS {
   MOT_CONFIG_NOT_DEFINED = "The MOT config is not defined in the config file.",
   DYNAMO_DB_CONFIG_NOT_DEFINED = "DynamoDB config is not defined in the config file.",
@@ -9,6 +5,7 @@ export enum ERRORS {
   ATF_CANT_BE_CREATED = "ATF Report can't be created.",
   EVENT_IS_EMPTY = "Event is empty",
   SECRET_ENV_VAR_NOT_EXIST = "SECRET_NAME environment variable does not exist.",
+  TEMPLATE_ID_ENV_VAR_NOT_EXIST = "TEMPLATE_ID environment variable does not exist.",
   SECRET_FILE_NOT_EXIST = "The secret file does not exist.",
   NOTIFY_CONFIG_NOT_SET = "The GovNotify configuration not set.",
 }

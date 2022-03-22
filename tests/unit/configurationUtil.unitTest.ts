@@ -6,9 +6,11 @@ import * as AWSMock from "aws-sdk-mock";
 import { fake, SinonSpy } from "sinon";
 import { GetSecretValueResponse } from "aws-sdk/clients/secretsmanager";
 import AWS = require("aws-sdk");
+import { ERRORS } from "../../src/assets/enum";
 
 describe("ConfigurationUtil", () => {
   const config: Configuration = Configuration.getInstance();
+  const badConfig: Configuration = new Configuration("../../tests/resources/badConfig.yml");
   const OLD_ENV = process.env;
 
   context("when calling the getS3Config() and the BRANCH environment variable is local", () => {
@@ -68,6 +70,40 @@ describe("ConfigurationUtil", () => {
       expect(notify.api_key.length).toBeGreaterThanOrEqual(1);
       expect(notify.endpoint.length).toBeGreaterThanOrEqual(1);
       AWSMock.restore("SecretsManager");
+    });
+  });
+
+  context("When calling getTemplateIdFromEv and the branch is local", () => {
+    process.env.BRANCH = "local";
+    it("should not throw an error when templateId does exist", async () => {
+      await config.getTemplateIdFromEV().then((templateId) => {
+        expect(templateId).toEqual("306d864b-a56d-49eb-b3cc-6d23cf8bcc26");
+      });
+    });
+    it("should throw an error when templateId doesn't exist in config file", async () => {
+      const mockError = new Error(ERRORS.TEMPLATE_ID_ENV_VAR_NOT_EXIST);
+      await badConfig.getTemplateIdFromEV().catch((error) => {
+        expect(error).toEqual(mockError);
+      });
+    });
+  });
+  context("When calling getTemplateIdFromEv and branch isn't local", () => {
+    it("should not throw and error when templateId is populated", async () => {
+      process.env.BRANCH = "remote";
+      process.env.TEMPLATE_ID = "some_template_id";
+      await config.getTemplateIdFromEV().then((templateId) => {
+        expect(templateId).toEqual("some_template_id");
+      });
+    });
+  });
+  context("When calling getTemplateIdFromEv and branch isn't local", () => {
+    it("should throw an error when templateId does not exist", async () => {
+      process.env.BRANCH = "remote";
+      delete process.env.TEMPLATE_ID;
+      const mockError = new Error(ERRORS.TEMPLATE_ID_ENV_VAR_NOT_EXIST);
+      await config.getTemplateIdFromEV().catch((error) => {
+        expect(error).toEqual(mockError);
+      });
     });
   });
 });

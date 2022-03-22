@@ -4,7 +4,6 @@ import { SendATFReport } from "../../src/services/SendATFReport";
 import event from "../resources/queue-event.json";
 import testResultsList from "../resources/test-results-200-response.json";
 import waitActivitiesList from "../resources/wait-time-response.json";
-import { TEMPLATE_IDS } from "../../src/assets/enum";
 import { TestResultsService } from "../../src/services/TestResultsService";
 import mockConfig from "../util/mockConfig";
 
@@ -37,7 +36,7 @@ describe("notification service", () => {
         await notifyService.sendNotification(sendNotificationData, ["test@test.com"]);
         const args = sendEmailMock.mock.calls[0];
         const personalisation = args[2].personalisation;
-        expect(args[0]).toEqual(TEMPLATE_IDS.ATF_REPORT_TEMPLATE);
+        expect(args[0]).toEqual("306d864b-a56d-49eb-b3cc-6d23cf8bcc26");
         expect(args[1]).toEqual("test@test.com");
         expect(personalisation.testStationPNumber).toEqual(visit.testStationPNumber);
         expect(personalisation.testStationName).toEqual(visit.testStationName);

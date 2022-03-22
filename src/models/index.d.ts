@@ -29,6 +29,7 @@ interface IMOTConfig {
     vtg5: "VTG5.pdf";
     vtg5a: "VTG5A.pdf";
   };
+  templateId: string;
 }
 
 interface IActivity {
