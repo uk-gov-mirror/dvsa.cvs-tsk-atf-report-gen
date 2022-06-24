@@ -1,0 +1,8 @@
+{
+  "headers": {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Credentials": true
+  },
+  "statusCode": 200,
+  "body": "[{\"testerStaffId\":\"132\",\"testerName\":\"Gica\",\"testStationName\":\"Rowe, Wunsch and Wisoky\",\"activityDay\":\"2022-06-02\",\"testStationPNumber\": \"87-1369561\",\"testStationType\": \"gvts\",\"startTime\": \"2022-06-02T04:00:40.561Z\",\"activityType\": \"visit\",\"testerEmail\": \"tester@dvsa.gov.uk\",\"endTime\": null,\"testStationEmail\": \"teststationname@dvsa.gov.uk\",\"id\": \"5e4bd304-446e-4678-8289-d34fca9256e9\"}]"
+}

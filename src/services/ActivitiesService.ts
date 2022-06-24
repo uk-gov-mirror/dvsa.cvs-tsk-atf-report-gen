@@ -39,7 +39,7 @@ class ActivitiesService {
     return this.lambdaClient.invoke(invokeParams).then((response: PromiseResult<Lambda.Types.InvocationResponse, AWSError>) => {
       const payload: any = this.lambdaClient.validateInvocationResponse(response); // Response validation
       const activityResults: any[] = JSON.parse(payload.body); // Response conversion
-      console.log(`Wait Activities: ${activityResults.length}`);
+      console.log(`Activities: ${activityResults.length}`);
 
       // Sort results by startTime
       activityResults.sort((first: any, second: any): number => {
