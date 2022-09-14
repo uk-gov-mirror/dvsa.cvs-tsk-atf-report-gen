@@ -25,7 +25,7 @@ describe("notification service", () => {
         const notificationData: NotificationData = new NotificationData();
         const sendNotificationData = notificationData.generateActivityDetails(visit, sendAtfReport.computeActivitiesList(testResultsArray, waitActivitesArray));
 
-        const sendEmailMock = jest.fn();
+        const sendEmailMock = jest.fn().mockResolvedValue({data: "it worked"});
         const notifyClientMock = jest.fn().mockImplementation(() => {
           return {
             sendEmail: sendEmailMock,

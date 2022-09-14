@@ -36,7 +36,7 @@
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.27",
     "node-yaml": "^4.0.1",
-    "notifications-node-client": "^4.7.0",
+    "notifications-node-client": "^5.1.1",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {

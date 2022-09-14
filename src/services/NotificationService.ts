@@ -29,7 +29,8 @@ class NotificationService {
     const sendEmailPromise = [];
 
     for (const email of emails) {
-      const sendEmail = this.notifyClient.sendEmail(templateId, email, emailDetails);
+      const sendEmail = this.notifyClient.sendEmail(templateId, email, emailDetails)
+        .then((response: any) => response.data);
       sendEmailPromise.push(sendEmail);
     }
 
