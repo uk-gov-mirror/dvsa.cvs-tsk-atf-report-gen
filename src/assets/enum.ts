@@ -29,3 +29,8 @@ export enum VEHICLE_TYPES {
   HGV = "hgv",
   TRL = "trl",
 }
+
+export enum EMAIL_TYPE {
+  ATF = "atf",
+  VSA = "vsa"
+}
