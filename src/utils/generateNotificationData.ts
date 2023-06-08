@@ -25,7 +25,7 @@ class NotificationData {
         const vrmTrailerId = event.activity.vehicleType === VEHICLE_TYPES.TRL ? event.activity.trailerId : event.activity.vrm;
         personalization.activityDetails +=
           `^#${this.capitalise(event.activityType)} (${vrmTrailerId})
-      ^• Time: ${this.formatDateAndTime(event.activity.testStartTimestamp, "time")} - ${this.formatDateAndTime(event.activity.testEndTimestamp, "time")}
+      ^• Time: ${this.formatDateAndTime(event.activity.testTypes.testTypeStartTimestamp, "time")} - ${this.formatDateAndTime(event.activity.testTypes.testTypeEndTimestamp, "time")}
       ^• Test description: ${event.activity.testTypes.testTypeName}
       ^• Axles / Seats: ${axlesSeats}
       ^• Result: ${this.capitalise(event.activity.testTypes.testResult)}` +

@@ -35,13 +35,13 @@ class TestResultsService {
       const payload: any = this.lambdaClient.validateInvocationResponse(response); // Response validation
       const testResults: any[] = JSON.parse(payload.body); // Response conversion
 
-      // Sort results by testEndTimestamp
+      // Sort results by testTypeEndTimeStamp
       testResults.sort((first: any, second: any): number => {
-        if (moment(first.testEndTimestamp).isBefore(second.testEndTimestamp)) {
+        if (moment(first.testTypes[0].testTypeEndTimeStamp).isBefore(second.testTypes[0].testTypeEndTimeStamp)) {
           return -1;
         }
 
-        if (moment(first.testEndTimestamp).isAfter(second.testEndTimestamp)) {
+        if (moment(first.testTypes[0].testTypeEndTimeStamp).isAfter(second.testTypes[0].testTypeEndTimeStamp)) {
           return 1;
         }
 
