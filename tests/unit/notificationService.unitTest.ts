@@ -1,13 +1,12 @@
+import { EMAIL_TYPE } from "../../src/assets/enum";
 import { NotificationService } from "../../src/services/NotificationService";
-import { NotificationData } from "../../src/utils/generateNotificationData";
 import { SendATFReport } from "../../src/services/SendATFReport";
+import { TestResultsService } from "../../src/services/TestResultsService";
+import { NotificationData } from "../../src/utils/generateNotificationData";
 import event from "../resources/queue-event.json";
 import testResultsList from "../resources/test-results-200-response.json";
 import waitActivitiesList from "../resources/wait-time-response.json";
-import { TestResultsService } from "../../src/services/TestResultsService";
 import mockConfig from "../util/mockConfig";
-import { EMAIL_TYPE } from "../../src/assets/enum";
-
 
 jest.mock("notifications-node-client");
 
@@ -15,7 +14,7 @@ describe("notification service", () => {
   mockConfig();
   afterAll(() => {
     jest.restoreAllMocks();
-    jest.resetModuleRegistry();
+    jest.resetModules();
   });
   context("send email", () => {
     context("when sending email with the correct data and emails", () => {
@@ -27,7 +26,7 @@ describe("notification service", () => {
         const notificationData: NotificationData = new NotificationData();
         const sendNotificationData = notificationData.generateActivityDetails(visit, sendAtfReport.computeActivitiesList(testResultsArray, waitActivitesArray));
 
-        const sendEmailMock = jest.fn().mockResolvedValue({data: "it worked"});
+        const sendEmailMock = jest.fn().mockResolvedValue({ data: "it worked" });
         const notifyClientMock = jest.fn().mockImplementation(() => {
           return {
             sendEmail: sendEmailMock,

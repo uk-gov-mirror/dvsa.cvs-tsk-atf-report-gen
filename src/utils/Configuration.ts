@@ -1,10 +1,10 @@
 // @ts-ignore
-import * as yml from "node-yaml";
-import { safeLoad } from "js-yaml";
-import { IConfig, IInvokeConfig, IMOTConfig, IS3Config, ISecretConfig } from "../models";
-import { ERRORS } from "../assets/enum";
 import { SecretsManager } from "aws-sdk";
 import { GetSecretValueRequest, GetSecretValueResponse } from "aws-sdk/clients/secretsmanager";
+import { safeLoad } from "js-yaml";
+import * as yml from "node-yaml";
+import { ERRORS } from "../assets/enum";
+import { IConfig, IInvokeConfig, IMOTConfig, IS3Config, ISecretConfig } from "../models";
 /* tslint:disable */
 const AWSXRay = require("aws-xray-sdk");
 
@@ -123,7 +123,7 @@ class Configuration {
       };
       const resp: GetSecretValueResponse = await this.secretsClient.getSecretValue(req).promise();
       try {
-        secretConfig = safeLoad(resp.SecretString as string);
+        secretConfig = safeLoad(resp.SecretString as string) as ISecretConfig;
       } catch (e) {
         throw new Error("SecretString is empty.");
       }
