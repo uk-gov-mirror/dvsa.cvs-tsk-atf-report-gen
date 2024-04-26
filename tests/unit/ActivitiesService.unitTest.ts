@@ -52,8 +52,8 @@ describe("Activities Service", () => {
             testerEmail: "tester@dvsa.gov.uk",
             endTime: null,
             testStationEmail: "teststationname@dvsa.gov.uk",
-            id: "5e4bd304-446e-4678-8289-d34fca9256e9"
-          }
+            id: "5e4bd304-446e-4678-8289-d34fca9256e9",
+          },
         ]);
       });
     });

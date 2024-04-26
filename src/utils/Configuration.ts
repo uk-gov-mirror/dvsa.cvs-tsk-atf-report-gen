@@ -1,12 +1,10 @@
 // @ts-ignore
-import { SecretsManager } from "aws-sdk";
-import { GetSecretValueRequest, GetSecretValueResponse } from "aws-sdk/clients/secretsmanager";
+import { SecretsManager, GetSecretValueRequest, GetSecretValueResponse } from "@aws-sdk/client-secrets-manager";
 import { safeLoad } from "js-yaml";
 import * as yml from "node-yaml";
 import { ERRORS } from "../assets/enum";
 import { IConfig, IInvokeConfig, IMOTConfig, IS3Config, ISecretConfig } from "../models";
-/* tslint:disable */
-const AWSXRay = require("aws-xray-sdk");
+import AWSXRay from "aws-xray-sdk";
 
 class Configuration {
   private static instance: Configuration;
@@ -15,7 +13,11 @@ class Configuration {
   private readonly secretPath = "../config/secrets.yml";
 
   constructor(configPath: string) {
-    this.secretsClient = AWSXRay.captureAWSClient(new SecretsManager({ region: "eu-west-1" }));
+    this.secretsClient = AWSXRay.captureAWSv3Client(
+      new SecretsManager({
+        region: "eu-west-1",
+      })
+    );
     this.config = yml.readSync(configPath);
 
     // Replace environment variable references
@@ -121,7 +123,7 @@ class Configuration {
       const req: GetSecretValueRequest = {
         SecretId: process.env.SECRET_NAME,
       };
-      const resp: GetSecretValueResponse = await this.secretsClient.getSecretValue(req).promise();
+      const resp: GetSecretValueResponse = await this.secretsClient.getSecretValue(req);
       try {
         secretConfig = safeLoad(resp.SecretString as string) as ISecretConfig;
       } catch (e) {

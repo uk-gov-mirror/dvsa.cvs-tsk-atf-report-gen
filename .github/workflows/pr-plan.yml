@@ -1,10 +1,10 @@
 name: PR-checks
 
 on:
- push:
-   branches: ['develop']
- pull_request:
-   branches: ['develop']
+  push:
+    branches: ["develop"]
+  pull_request:
+    branches: ["develop"]
 
 jobs:
   scanner:
@@ -17,12 +17,12 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: ".nvmrc"
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.CVS_MGMT_AWS_ROLE }}
           aws-region: ${{ secrets.DVSA_AWS_REGION }}
-          role-session-name: 'cvs-tsk-atf-report-gen'
+          role-session-name: "cvs-tsk-atf-report-gen"
       - uses: aws-actions/aws-secretsmanager-get-secrets@v1
         with:
           secret-ids: sonarqube-gha
@@ -31,10 +31,10 @@ jobs:
         run: npm ci
       - name: Run SonarQube scanner
         run: |
-         npm run test && \
-         npm run sonar-scanner -- \
-         -Dsonar.host.url=${{ env.SONARQUBE_GHA_URL }} \
-         -Dsonar.token=${{ env.SONARQUBE_GHA_TOKEN }} \
-         -Dsonar.login=${{ env.SONARQUBE_GHA_TOKEN }} \
-         -Dsonar.projectName=${{ github.repository }} \
-         -Dsonar.projectVersion=1.0.${{ github.run_id }}
+          npm run test && \
+          npm run sonar-scanner -- \
+          -Dsonar.host.url=${{ env.SONARQUBE_GHA_URL }} \
+          -Dsonar.token=${{ env.SONARQUBE_GHA_TOKEN }} \
+          -Dsonar.login=${{ env.SONARQUBE_GHA_TOKEN }} \
+          -Dsonar.projectName=${{ github.repository }} \
+          -Dsonar.projectVersion=1.0.${{ github.run_id }}

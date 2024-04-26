@@ -1,17 +1,16 @@
 import { LambdaService } from "../../src/services/LambdaService";
-import AWS, { Lambda } from "aws-sdk";
-import AWSMock from "aws-sdk-mock";
+import { InvokeCommand, LambdaClient } from "@aws-sdk/client-lambda";
 import mockConfig from "../util/mockConfig";
-
-AWSMock.setSDKInstance(AWS);
+import { toUint8Array } from "@smithy/util-utf8";
+import { mockClient } from "aws-sdk-client-mock";
 
 describe("When LambdaService ", () => {
   mockConfig();
   context("validateInvocationResponse", () => {
     context("gets 404", () => {
       it("should return an empty 200", async () => {
-        const service = new LambdaService(new Lambda());
-        const payload = await service.validateInvocationResponse({ Payload: '{"statusCode": 404, "body": "No resource match the selected criteria"}', StatusCode: 200 });
+        const service = new LambdaService(new LambdaClient());
+        const payload = await service.validateInvocationResponse({ Payload: toUint8Array('{"statusCode": 404, "body": "No resource match the selected criteria"}'), StatusCode: 200 });
         expect(payload.statusCode).toEqual(200);
         expect(payload.body).toEqual("[]");
       });
@@ -19,10 +18,10 @@ describe("When LambdaService ", () => {
 
     context("gets high error and body", () => {
       it("should throw an error", async () => {
-        const service = new LambdaService(new Lambda());
+        const service = new LambdaService(new LambdaClient());
         expect.assertions(2);
         try {
-          await service.validateInvocationResponse({ Payload: '{"statusCode": 503, "body": "Service unavailable"}', StatusCode: 200 });
+          await service.validateInvocationResponse({ Payload: toUint8Array('{"statusCode": 503, "body": "Service unavailable"}'), StatusCode: 200 });
         } catch (e) {
           expect(e.message).toEqual("Lambda invocation returned error: 503 Service unavailable");
           expect(e).toBeInstanceOf(Error);
@@ -32,7 +31,7 @@ describe("When LambdaService ", () => {
 
     context("gets high error and no body", () => {
       it("should throw an error", async () => {
-        const service = new LambdaService(new Lambda());
+        const service = new LambdaService(new LambdaClient());
         expect.assertions(2);
         try {
           await service.validateInvocationResponse({ StatusCode: 418 });
@@ -45,10 +44,10 @@ describe("When LambdaService ", () => {
 
     context("gets OK response and no body object in ", () => {
       it("should throw an error", async () => {
-        const service = new LambdaService(new Lambda());
+        const service = new LambdaService(new LambdaClient());
         expect.assertions(2);
         try {
-          await service.validateInvocationResponse({ Payload: "{}", StatusCode: 200 });
+          await service.validateInvocationResponse({ Payload: toUint8Array("{}"), StatusCode: 200 });
         } catch (e) {
           expect(e.message).toEqual("Lambda invocation returned bad data: {}.");
           expect(e).toBeInstanceOf(Error);
@@ -58,10 +57,10 @@ describe("When LambdaService ", () => {
 
     context("gets good response", () => {
       it("should return the payload body", async () => {
-        const service = new LambdaService(new Lambda());
+        const service = new LambdaService(new LambdaClient());
         expect.assertions(1);
         try {
-          const result = await service.validateInvocationResponse({ Payload: '{"statusCode": 200, "body": "It worked"}', StatusCode: 200 });
+          const result = await service.validateInvocationResponse({ Payload: toUint8Array('{"statusCode": 200, "body": "It worked"}'), StatusCode: 200 });
           expect(result).toEqual({ statusCode: 200, body: "It worked" });
         } catch {
           // Should never reach
@@ -73,18 +72,18 @@ describe("When LambdaService ", () => {
   context("Invoke", () => {
     context("gets an error from the Lambda SDK", () => {
       it("bubbles that error up", async () => {
-        AWSMock.mock("Lambda", "invoke", (params: any, callback: any) => {
-          callback(new Error("Oh no"));
-        });
-        const lambda = new AWS.Lambda();
-        const service = new LambdaService(lambda);
+        const mockLambdaClient = mockClient(LambdaClient).on(InvokeCommand).rejects(new Error("Oh no"));
+
+        const service = new LambdaService(new LambdaClient());
+
         expect.assertions(1);
         try {
           await service.invoke({ FunctionName: "bob" });
         } catch (e) {
           expect(e.message).toEqual("Oh no");
         }
-        AWSMock.restore("Lambda");
+
+        mockLambdaClient.reset();
       });
     });
   });

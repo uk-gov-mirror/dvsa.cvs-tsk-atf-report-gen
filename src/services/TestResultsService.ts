@@ -1,9 +1,9 @@
 import { IInvokeConfig } from "../models";
-import { PromiseResult } from "aws-sdk/lib/request";
-import { AWSError, Lambda } from "aws-sdk";
+import { InvocationRequest, InvocationResponse } from "@aws-sdk/client-lambda";
 import { LambdaService } from "./LambdaService";
 import { Configuration } from "../utils/Configuration";
 import moment from "moment";
+import { toUint8Array } from "@smithy/util-utf8";
 
 class TestResultsService {
   private readonly lambdaClient: LambdaService;
@@ -20,18 +20,20 @@ class TestResultsService {
    */
   public getTestResults(params: any): Promise<any> {
     const config: IInvokeConfig = this.config.getInvokeConfig();
-    const invokeParams: any = {
+    const invokeParams: InvocationRequest = {
       FunctionName: config.functions.testResults.name,
       InvocationType: "RequestResponse",
       LogType: "Tail",
-      Payload: JSON.stringify({
-        httpMethod: "GET",
-        path: "/test-results/getTestResultsByTesterStaffId",
-        queryStringParameters: params,
-      }),
+      Payload: toUint8Array(
+        JSON.stringify({
+          httpMethod: "GET",
+          path: "/test-results/getTestResultsByTesterStaffId",
+          queryStringParameters: params,
+        })
+      ),
     };
 
-    return this.lambdaClient.invoke(invokeParams).then((response: PromiseResult<Lambda.Types.InvocationResponse, AWSError>) => {
+    return this.lambdaClient.invoke(invokeParams).then((response: InvocationResponse) => {
       const payload: any = this.lambdaClient.validateInvocationResponse(response); // Response validation
       const testResults: any[] = JSON.parse(payload.body); // Response conversion
 

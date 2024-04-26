@@ -2,10 +2,8 @@ import { Configuration } from "../../src/utils/Configuration";
 import { IS3Config } from "../../src/models";
 import { safeDump } from "js-yaml";
 import * as fs from "fs";
-import * as AWSMock from "aws-sdk-mock";
+import { GetSecretValueResponse } from "@aws-sdk/client-secrets-manager";
 import { fake, SinonSpy } from "sinon";
-import { GetSecretValueResponse } from "aws-sdk/clients/secretsmanager";
-import AWS = require("aws-sdk");
 import { ERRORS } from "../../src/assets/enum";
 
 describe("ConfigurationUtil", () => {
@@ -64,12 +62,9 @@ describe("ConfigurationUtil", () => {
   apiKey: asfg`,
       };
       const spy: SinonSpy = fake.resolves(fakeResp);
-      AWSMock.setSDKInstance(AWS);
-      AWSMock.mock("SecretsManager", "getSecretValue", spy);
       const notify = await Configuration.getInstance().getGovNotifyConfig();
       expect(notify.api_key.length).toBeGreaterThanOrEqual(1);
       expect(notify.endpoint.length).toBeGreaterThanOrEqual(1);
-      AWSMock.restore("SecretsManager");
     });
   });
 

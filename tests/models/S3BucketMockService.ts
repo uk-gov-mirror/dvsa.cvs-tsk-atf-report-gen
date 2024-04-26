@@ -1,6 +1,5 @@
-import { Metadata } from "aws-sdk/clients/s3";
+import { PutObjectRequest } from "@aws-sdk/client-s3";
 import { Readable } from "stream";
-import { ManagedUpload } from "aws-sdk/lib/s3/managed_upload";
 
 interface IBucket {
   bucketName: string;
@@ -20,7 +19,7 @@ class S3BucketMockService {
    * @param content - contents of the file
    * @param metadata - optional metadata
    */
-  public async upload(bucketName: string, fileName: string, content: Buffer | Uint8Array | Blob | string | Readable, metadata?: Metadata): Promise<ManagedUpload.SendData> {
+  public async upload(bucketName: string, fileName: string, content: Buffer | Uint8Array | Blob | string | Readable, metadata?: Record<string, string>): Promise<PutObjectRequest> {
     const bucket: IBucket | undefined = S3BucketMockService.buckets.find((currentBucket: IBucket) => {
       return currentBucket.bucketName === bucketName;
     });
@@ -37,7 +36,7 @@ class S3BucketMockService {
       throw error;
     }
 
-    const response: ManagedUpload.SendData = {
+    const response: any = {
       Location: `http://localhost:7000/${bucketName}/${fileName}`,
       ETag: "621c9c14d75958d4c3ed8ad77c80cde1",
       Bucket: bucketName,

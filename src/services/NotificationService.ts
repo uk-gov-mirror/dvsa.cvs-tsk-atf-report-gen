@@ -1,10 +1,9 @@
-import { AWSError } from "aws-sdk";
+import { ServiceException } from "@smithy/smithy-client";
 import { HTTPError } from "../models/HTTPError";
 // @ts-ignore
 import { NotifyClient } from "notifications-node-client";
 import { Configuration } from "../utils/Configuration";
 import { EMAIL_TYPE } from "../assets/enum";
-
 
 /**
  * Service class for Certificate Notifications
@@ -32,8 +31,7 @@ class NotificationService {
     const sendEmailPromise = [];
 
     for (const email of emails) {
-      const sendEmail = this.notifyClient.sendEmail(templateId, email, emailDetails)
-        .then((response: any) => response.data);
+      const sendEmail = this.notifyClient.sendEmail(templateId, email, emailDetails).then((response: any) => response.data);
       sendEmailPromise.push(sendEmail);
     }
 
@@ -43,9 +41,9 @@ class NotificationService {
       console.log(`report successfully sent to VSA for PNumber ${params.testStationPNumber} with activity ${activityId}.`);
     }
 
-    return Promise.all(sendEmailPromise).catch((error: AWSError) => {
+    return Promise.all(sendEmailPromise).catch((error: ServiceException) => {
       console.error(error);
-      throw new HTTPError(error.statusCode, error.message);
+      throw new HTTPError(error.$response?.statusCode, error.message);
     });
   }
 }

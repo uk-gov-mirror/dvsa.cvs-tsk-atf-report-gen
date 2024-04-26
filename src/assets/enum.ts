@@ -32,5 +32,5 @@ export enum VEHICLE_TYPES {
 
 export enum EMAIL_TYPE {
   ATF = "atf",
-  VSA = "vsa"
+  VSA = "vsa",
 }

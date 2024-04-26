@@ -1,7 +1,8 @@
 import { processRecord } from "@dvsa/cvs-microservice-common/functions/sqsFilter";
 import { Callback, Context, Handler } from "aws-lambda";
-import { AWSError, Lambda } from "aws-sdk";
-import { ManagedUpload } from "aws-sdk/clients/s3";
+import { ServiceException } from "@smithy/smithy-client";
+import { LambdaClient } from "@aws-sdk/client-lambda";
+import { PutObjectRequest } from "@aws-sdk/client-s3";
 import { ERRORS } from "../assets/enum";
 import { ActivitiesService } from "../services/ActivitiesService";
 import { LambdaService } from "../services/LambdaService";
@@ -15,20 +16,21 @@ import { TestResultsService } from "../services/TestResultsService";
  * @param context - λ Context
  * @param callback - callback function
  */
-const reportGen: Handler = async (event: any, context?: Context, callback?: Callback): Promise<void | ManagedUpload.SendData[]> => {
+const reportGen: Handler = async (event: any, context?: Context, callback?: Callback): Promise<void | PutObjectRequest[]> => {
   if (!event || !event.Records || !Array.isArray(event.Records) || !event.Records.length) {
     console.error("ERROR: event is not defined.");
     throw new Error(ERRORS.EVENT_IS_EMPTY);
   }
-  const lambdaService = new LambdaService(new Lambda());
+  const lambdaService = new LambdaService(new LambdaClient({}));
   const reportService: ReportGenerationService = new ReportGenerationService(new TestResultsService(lambdaService), new ActivitiesService(lambdaService));
-  const atfReportPromises: Array<Promise<ManagedUpload.SendData>> = [];
+  const atfReportPromises: Promise<PutObjectRequest>[] = [];
 
   const sendATFReport: SendATFReport = new SendATFReport();
 
   event.Records.forEach((record: any) => {
-    const recordBody =JSON.parse(JSON.parse(record.body).Message);
+    const recordBody = JSON.parse(JSON.parse(record?.body)?.Message);
     const visit: any = processRecord(recordBody);
+
     if (visit) {
       const atfReportPromise = reportService
         .generateATFReport(visit)
@@ -44,7 +46,7 @@ const reportGen: Handler = async (event: any, context?: Context, callback?: Call
     }
   });
 
-  return Promise.all(atfReportPromises).catch((error: AWSError) => {
+  return Promise.all(atfReportPromises).catch((error: ServiceException) => {
     console.error(error);
     throw error;
   });

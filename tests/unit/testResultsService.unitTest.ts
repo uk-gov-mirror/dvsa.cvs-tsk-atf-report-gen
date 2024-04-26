@@ -6,6 +6,7 @@ import { HTTPError } from "../../src/models/HTTPError";
 import { LambdaService } from "../../src/services/LambdaService";
 import { wrapLambdaErrorResponse, wrapLambdaResponse } from "../util/responseUtils";
 import mockConfig from "../util/mockConfig";
+import { toUint8Array } from "@smithy/util-utf8";
 
 describe("TestResultsService", () => {
   mockConfig();
@@ -127,12 +128,13 @@ describe("TestResultsService", () => {
         });
       });
 
+      // FAIL HERE
       context("and the response is non-200", () => {
         it("should throw an error", () => {
           const mockLambdaService = jest.fn().mockImplementation(() => {
             return {
               invoke: () => {
-                return Promise.resolve(wrapLambdaErrorResponse(404, testResults404));
+                return Promise.resolve(wrapLambdaErrorResponse(404, toUint8Array(JSON.stringify(testResults404))));
               },
               validateInvocationResponse: LambdaService.prototype.validateInvocationResponse,
             };

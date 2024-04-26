@@ -1,5 +1,5 @@
-import AWS, { Lambda } from "aws-sdk";
-import AWSMock from "aws-sdk-mock";
+import { LambdaClient } from "@aws-sdk/client-lambda";
+import { mockClient } from "aws-sdk-client-mock";
 import sinon from "sinon";
 import { LambdaService } from "../../src/services/LambdaService";
 
@@ -8,15 +8,18 @@ import testStationResponse from "../resources/test-stations-200-response.json";
 import mockConfig from "../util/mockConfig";
 
 describe("TestStationsService", () => {
-  AWSMock.setSDKInstance(AWS);
+  mockClient(LambdaClient);
   const sandbox = sinon.createSandbox();
   mockConfig();
+
   const lambdaMock = jest.fn().mockImplementation(() => {
     return {
       invoke: jest.fn().mockResolvedValue(""),
       validateInvocationResponse: jest.fn().mockReturnValue(testStationResponse),
+      send: jest.fn().mockResolvedValue({ Payload: testStationResponse }),
     };
   });
+
   const testStationsService: TestStationsService = new TestStationsService(new lambdaMock());
 
   afterEach(() => {
@@ -36,7 +39,7 @@ describe("TestStationsService", () => {
 
     context("and the lambda function throws an error", () => {
       it("should bubble up the error (error in Invoke)", async () => {
-        const service = new TestStationsService(new LambdaService(new Lambda()));
+        const service = new TestStationsService(new LambdaService(new LambdaClient()));
         sandbox.stub(LambdaService.prototype, "invoke").throws(new Error("Oh no"));
         expect.assertions(1);
         try {
@@ -47,10 +50,7 @@ describe("TestStationsService", () => {
       });
 
       it("should bubble up the error (error in validateInvocationResponse)", async () => {
-        AWSMock.mock("Lambda", "invoke", (params: any, callback: any) => {
-          callback(null, "all good");
-        });
-        const lambda = new AWS.Lambda();
+        const lambda = new LambdaClient();
         const service = new TestStationsService(new LambdaService(lambda));
 
         sandbox.stub(LambdaService.prototype, "validateInvocationResponse").throws(new Error("Not again"));
@@ -60,7 +60,6 @@ describe("TestStationsService", () => {
         } catch (e) {
           expect(e.body).toEqual("Not again");
         }
-        AWSMock.restore("Lambda");
       });
     });
   });

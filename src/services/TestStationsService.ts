@@ -1,8 +1,9 @@
 import { IInvokeConfig } from "../models";
-import { Lambda } from "aws-sdk";
+import { InvocationRequest, InvocationResponse } from "@aws-sdk/client-lambda";
 import { LambdaService } from "./LambdaService";
 import { Configuration } from "../utils/Configuration";
 import { HTTPError } from "../models/HTTPError";
+import { toUint8Array } from "@smithy/util-utf8";
 
 class TestStationsService {
   private readonly lambdaClient: LambdaService;
@@ -19,21 +20,23 @@ class TestStationsService {
    */
   public getTestStationEmail(testStationPNumber: string): Promise<any> {
     const config: IInvokeConfig = this.config.getInvokeConfig();
-    const invokeParams: any = {
+    const invokeParams: InvocationRequest = {
       FunctionName: config.functions.testStations.name,
       InvocationType: "RequestResponse",
       LogType: "Tail",
-      Payload: JSON.stringify({
-        httpMethod: "GET",
-        path: `/test-stations/${testStationPNumber}`,
-        pathParameters: {
-          testStationPNumber,
-        },
-      }),
+      Payload: toUint8Array(
+        JSON.stringify({
+          httpMethod: "GET",
+          path: `/test-stations/${testStationPNumber}`,
+          pathParameters: {
+            testStationPNumber,
+          },
+        })
+      ),
     };
     return this.lambdaClient
       .invoke(invokeParams)
-      .then((response: Lambda.Types.InvocationResponse) => {
+      .then((response: InvocationResponse) => {
         const payload: any = this.lambdaClient.validateInvocationResponse(response); // Response validation
         return JSON.parse(payload.body); // Response conversion
       })

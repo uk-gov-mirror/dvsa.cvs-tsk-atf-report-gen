@@ -1,9 +1,9 @@
 import { IInvokeConfig } from "../models";
-import { PromiseResult } from "aws-sdk/lib/request";
-import { AWSError, Lambda } from "aws-sdk";
+import { InvocationRequest, InvocationResponse } from "@aws-sdk/client-lambda";
 import { LambdaService } from "./LambdaService";
 import { Configuration } from "../utils/Configuration";
 import moment from "moment";
+import { toUint8Array } from "@smithy/util-utf8";
 
 class ActivitiesService {
   private readonly lambdaClient: LambdaService;
@@ -20,15 +20,17 @@ class ActivitiesService {
    */
   public getActivities(params: any): Promise<any> {
     const config: IInvokeConfig = this.config.getInvokeConfig();
-    const invokeParams: any = {
+    const invokeParams: InvocationRequest = {
       FunctionName: config.functions.getActivities.name,
       InvocationType: "RequestResponse",
       LogType: "Tail",
-      Payload: JSON.stringify({
-        httpMethod: "GET",
-        path: "/activities/details",
-        queryStringParameters: params,
-      }),
+      Payload: toUint8Array(
+        JSON.stringify({
+          httpMethod: "GET",
+          path: "/activities/details",
+          queryStringParameters: params,
+        })
+      ),
     };
 
     // TODO fail fast if activityType is not 'visit' as per CVSB-19853 - this code will be removed as part of the 'wait time epic'
@@ -36,7 +38,7 @@ class ActivitiesService {
       return Promise.resolve([]);
     }
 
-    return this.lambdaClient.invoke(invokeParams).then((response: PromiseResult<Lambda.Types.InvocationResponse, AWSError>) => {
+    return this.lambdaClient.invoke(invokeParams).then((response: InvocationResponse) => {
       const payload: any = this.lambdaClient.validateInvocationResponse(response); // Response validation
       const activityResults: any[] = JSON.parse(payload.body); // Response conversion
       console.log(`Activities: ${activityResults.length}`);

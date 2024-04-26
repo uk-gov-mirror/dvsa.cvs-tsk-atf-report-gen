@@ -1,6 +1,6 @@
 // @ts-ignore
 import { NotifyClient } from "notifications-node-client";
-import { Lambda } from "aws-sdk";
+import { LambdaClient } from "@aws-sdk/client-lambda";
 import { ACTIVITY_TYPE, EMAIL_TYPE } from "../assets/enum";
 import { Configuration } from "../utils/Configuration";
 import { IActivitiesList, IActivity, ITestResults } from "../models";
@@ -16,7 +16,7 @@ class SendATFReport {
   private apiKey: string | undefined;
 
   constructor() {
-    this.testStationsService = new TestStationsService(new LambdaService(new Lambda()));
+    this.testStationsService = new TestStationsService(new LambdaService(new LambdaClient()));
     this.notificationData = new NotificationData();
   }
 
