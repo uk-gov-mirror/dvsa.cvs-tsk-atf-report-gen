@@ -27,7 +27,7 @@ class TestStationsService {
       Payload: toUint8Array(
         JSON.stringify({
           httpMethod: "GET",
-          path: `/test-stations/${testStationPNumber}`,
+          path: `/test-stations/${testStationPNumber}/email-addresses`,
           pathParameters: {
             testStationPNumber,
           },
