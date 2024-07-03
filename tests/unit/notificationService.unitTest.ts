@@ -1,4 +1,3 @@
-import { EMAIL_TYPE } from "../../src/assets/enum";
 import { NotificationService } from "../../src/services/NotificationService";
 import { SendATFReport } from "../../src/services/SendATFReport";
 import { TestResultsService } from "../../src/services/TestResultsService";
@@ -34,7 +33,7 @@ describe("notification service", () => {
         });
         const notifyService: NotificationService = new NotificationService(new notifyClientMock());
 
-        await notifyService.sendNotification(sendNotificationData, ["test@test.com"], EMAIL_TYPE.VSA, "3124124-12341243");
+        await notifyService.sendNotification(sendNotificationData, ["test@test.com"], "3124124-12341243");
         const args = sendEmailMock.mock.calls[0];
         const personalisation = args[2].personalisation;
         expect(args[0]).toEqual("306d864b-a56d-49eb-b3cc-6d23cf8bcc26");

@@ -106,16 +106,14 @@ describe("sendATFReport", () => {
         sendATFReport.testStationsService.getTestStationEmail = jest.fn().mockResolvedValue([
           {
             testStationPNumber: "09-4129632",
-            testStationEmails: ["teststationname@dvsa.gov.uk"],
+            testStationEmails: ["teststationname@dvsa.gov.uk", "anotherteststationname@dvsa.gov.uk"],
             testStationId: "9",
           },
         ]);
-        expect.assertions(2);
+        expect.assertions(1);
         return sendATFReport.sendATFReport(generationServiceResponse, visit).then((response: any) => {
-          const notifyCallArgsTestStation = notifyMock.mock.calls[0];
-          const notifyCallArgsTester = notifyMock.mock.calls[1];
-          expect(notifyCallArgsTestStation[1]).toEqual(["teststationname@dvsa.gov.uk"]);
-          expect(notifyCallArgsTester[1]).toEqual(["test@dvsa.gov.uk"]);
+          const notifyCallArgs = notifyMock.mock.calls[0];
+          expect(notifyCallArgs[1]).toEqual(["test@dvsa.gov.uk", "teststationname@dvsa.gov.uk", "anotherteststationname@dvsa.gov.uk"]);
         });
       });
     });

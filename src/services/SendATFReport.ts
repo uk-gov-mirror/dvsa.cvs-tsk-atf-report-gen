@@ -1,11 +1,11 @@
+import { LambdaClient } from "@aws-sdk/client-lambda";
 // @ts-ignore
 import { NotifyClient } from "notifications-node-client";
-import { LambdaClient } from "@aws-sdk/client-lambda";
-import { ACTIVITY_TYPE, EMAIL_TYPE } from "../assets/enum";
-import { Configuration } from "../utils/Configuration";
+import { ACTIVITY_TYPE } from "../assets/enum";
 import { IActivitiesList, IActivity, ITestResults } from "../models";
-import { LambdaService } from "./LambdaService";
+import { Configuration } from "../utils/Configuration";
 import { NotificationData } from "../utils/generateNotificationData";
+import { LambdaService } from "./LambdaService";
 import { NotificationService } from "./NotificationService";
 import { TestStationsService } from "./TestStationsService";
 
@@ -25,25 +25,29 @@ class SendATFReport {
    * @param generationServiceResponse - The response from the ATF generation service
    * @param visit - Data about the current visit
    */
-  public async sendATFReport(generationServiceResponse: any, visit: any): Promise<any> {
+  public async sendATFReport(generationServiceResponse: any, visit: any) {
     // Add testResults and waitActivities in a common list and sort it by startTime
     const activitiesList = this.computeActivitiesList(generationServiceResponse.testResults, generationServiceResponse.waitActivities);
 
     const response = await this.testStationsService.getTestStationEmail(visit.testStationPNumber);
+    console.debug("get test stations responded");
     const sendNotificationData = this.notificationData.generateActivityDetails(visit, activitiesList);
+    console.debug(`send notification data: ${JSON.stringify(sendNotificationData)}`);
     if (!this.notifyService) {
       if (!this.apiKey) {
         this.apiKey = (await Configuration.getInstance().getGovNotifyConfig()).api_key;
       }
       this.notifyService = new NotificationService(new NotifyClient(this.apiKey));
     }
+
+    const emails = [visit.testerEmail];
     // VTM allows blank email addresses on a test-station record so check before sending
     if (response[0].testStationEmails && response[0].testStationEmails.length > 0) {
-      await this.notifyService.sendNotification(sendNotificationData, response[0].testStationEmails, EMAIL_TYPE.ATF, visit.id);
+      emails.push(...response[0].testStationEmails);
     } else {
       console.log(`No email address exists for test station PNumber ${visit.testStationPNumber}`);
     }
-    return this.notifyService.sendNotification(sendNotificationData, [visit.testerEmail], EMAIL_TYPE.VSA, visit.id);
+    await this.notifyService.sendNotification(sendNotificationData, emails, visit.id);
   }
 
   /**

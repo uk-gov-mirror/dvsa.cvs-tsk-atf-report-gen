@@ -1,9 +1,9 @@
-import { IInvokeConfig } from "../models";
 import { InvocationRequest, InvocationResponse } from "@aws-sdk/client-lambda";
-import { LambdaService } from "./LambdaService";
-import { Configuration } from "../utils/Configuration";
-import moment from "moment";
 import { toUint8Array } from "@smithy/util-utf8";
+import moment from "moment";
+import { IInvokeConfig } from "../models";
+import { Configuration } from "../utils/Configuration";
+import { LambdaService } from "./LambdaService";
 
 class ActivitiesService {
   private readonly lambdaClient: LambdaService;
@@ -19,6 +19,7 @@ class ActivitiesService {
    * @param params - getActivities query parameters
    */
   public getActivities(params: any): Promise<any> {
+    console.log(`getActivities called with params: ${JSON.stringify(params)}`);
     const config: IInvokeConfig = this.config.getInvokeConfig();
     const invokeParams: InvocationRequest = {
       FunctionName: config.functions.getActivities.name,
@@ -33,8 +34,8 @@ class ActivitiesService {
       ),
     };
 
-    // TODO fail fast if activityType is not 'visit' as per CVSB-19853 - this code will be removed as part of the 'wait time epic'
     if (params.activityType !== "visit") {
+      console.log("not a visit, resolving a promise with an empty array");
       return Promise.resolve([]);
     }
 

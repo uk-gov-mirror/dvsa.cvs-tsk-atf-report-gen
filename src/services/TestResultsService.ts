@@ -1,9 +1,9 @@
-import { IInvokeConfig } from "../models";
 import { InvocationRequest, InvocationResponse } from "@aws-sdk/client-lambda";
-import { LambdaService } from "./LambdaService";
-import { Configuration } from "../utils/Configuration";
-import moment from "moment";
 import { toUint8Array } from "@smithy/util-utf8";
+import moment from "moment";
+import { IInvokeConfig } from "../models";
+import { Configuration } from "../utils/Configuration";
+import { LambdaService } from "./LambdaService";
 
 class TestResultsService {
   private readonly lambdaClient: LambdaService;
@@ -19,6 +19,7 @@ class TestResultsService {
    * @param params - getTestResultsByTesterStaffId query parameters
    */
   public getTestResults(params: any): Promise<any> {
+    console.debug(`inside get test results: ${JSON.stringify(params)}`);
     const config: IInvokeConfig = this.config.getInvokeConfig();
     const invokeParams: InvocationRequest = {
       FunctionName: config.functions.testResults.name,
@@ -37,6 +38,7 @@ class TestResultsService {
       const payload: any = this.lambdaClient.validateInvocationResponse(response); // Response validation
       const testResults: any[] = JSON.parse(payload.body); // Response conversion
 
+      console.debug(`test result response is: ${JSON.stringify(testResults)}`);
       // Sort results by testTypeEndTimeStamp
       testResults.sort((first: any, second: any): number => {
         if (moment(first.testTypes[0].testTypeEndTimeStamp).isBefore(second.testTypes[0].testTypeEndTimeStamp)) {
@@ -60,6 +62,7 @@ class TestResultsService {
    * @param testResults
    */
   public expandTestResults(testResults: any): any[] {
+    console.debug("Splitting test results into multiple records");
     return testResults
       .map((testResult: any) => {
         // Separate each test type in a record to form multiple test results
