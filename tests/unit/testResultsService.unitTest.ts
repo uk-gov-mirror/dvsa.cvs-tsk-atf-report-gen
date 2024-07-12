@@ -22,7 +22,7 @@ describe("TestResultsService", () => {
               numberOfSeats: 45,
               testStartTimestamp: "2019-01-14T10:36:33.987Z",
               testEndTimestamp: "2019-01-14T10:36:33.987Z",
-              testTypes: {
+              testTypes: [{
                 prohibitionIssued: false,
                 testCode: "aas",
                 testNumber: "1",
@@ -71,7 +71,7 @@ describe("TestResultsService", () => {
                 name: "Annual test",
                 certificateLink: "http://dvsagov.co.uk",
                 testResult: "pass",
-              },
+              }],
               vin: "XMGDE02FS0H012345",
             },
           ];

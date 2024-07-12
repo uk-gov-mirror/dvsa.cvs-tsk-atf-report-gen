@@ -1,8 +1,9 @@
 import { ERRORS, STATUSES } from "../assets/enum";
-import { IActivity } from "../models";
 import { HTTPError } from "../models/HTTPError";
 import { ActivitiesService } from "./ActivitiesService";
 import { TestResultsService } from "./TestResultsService";
+import { ActivitySchema } from "@dvsa/cvs-type-definitions/types/v1/activity";
+import { TestResultSchema } from "@dvsa/cvs-type-definitions/types/v1/test-result";
 
 class ReportGenerationService {
   private readonly testResultsService: TestResultsService;
@@ -17,10 +18,10 @@ class ReportGenerationService {
    * Generates the ATF report for a given activity
    * @param activity - activity for which to generate the report
    */
-  public async generateATFReport(activity: IActivity): Promise<any> {
+  public async generateATFReport(activity: ActivitySchema): Promise<{ testResults: TestResultSchema[]; waitActivities: ActivitySchema[]; }> {
     console.debug("Inside generateATFReport");
     try {
-      const testResults = await this.testResultsService
+      const testResults: TestResultSchema[] = await this.testResultsService
         .getTestResults({
           testerStaffId: activity.testerStaffId,
           fromDateTime: activity.startTime,
@@ -29,7 +30,7 @@ class ReportGenerationService {
           testStatus: STATUSES.SUBMITTED,
         });
 
-      const waitActivities = await this.activitiesService
+      const waitActivities: ActivitySchema[] = await this.activitiesService
         .getActivities({
           testerStaffId: activity.testerStaffId,
           fromStartTime: activity.startTime,

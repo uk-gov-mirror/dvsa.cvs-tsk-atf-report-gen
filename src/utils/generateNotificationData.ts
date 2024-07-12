@@ -1,36 +1,40 @@
 import moment = require("moment-timezone");
 import { ACTIVITY_TYPE, TIMEZONE, VEHICLE_TYPES } from "../assets/enum";
 import { IActivitiesList } from "../models";
+import { ActivitySchema } from "@dvsa/cvs-type-definitions/types/v1/activity";
 
 class NotificationData {
   /**
    * Generates the activity details for the ATF Report template
-   * @param activity - activity that will be added in the email
-   * @param testResultsList - list of test results that will be added in the email
-   * @return personalization - Array that contains the entries for each activity and test result
+   * @param activitiesList
+   * @param visit
+   * @param activitiesList
    */
-  public generateActivityDetails(visit: any, activitiesList: IActivitiesList[]) {
+  public generateActivityDetails(visit: ActivitySchema, activitiesList: IActivitiesList[]) {
+    // console.log(visit)
+    // console.log(activitiesList)
     // Populating the list details.
     const personalization: any = {};
     personalization.testStationPNumber = visit.testStationPNumber;
     personalization.testerName = visit.testerName;
     personalization.startTimeDate = this.formatDateAndTime(visit.startTime, "date");
     personalization.startTime = this.formatDateAndTime(visit.startTime, "time");
-    personalization.endTime = this.formatDateAndTime(visit.endTime, "time");
+    personalization.endTime = this.formatDateAndTime(visit.endTime!, "time");
     personalization.testStationName = visit.testStationName;
     personalization.activityDetails = "";
     for (const [index, event] of activitiesList.entries()) {
+      // console.log(event);
       if (event.activityType === ACTIVITY_TYPE.TEST) {
         const axlesSeats = event.activity.vehicleType === VEHICLE_TYPES.PSV ? event.activity.numberOfSeats : event.activity.noOfAxles;
         const vrmTrailerId = event.activity.vehicleType === VEHICLE_TYPES.TRL ? event.activity.trailerId : event.activity.vrm;
         personalization.activityDetails +=
           `^#${this.capitalise(event.activityType)} (${vrmTrailerId})
-      ^• Time: ${this.formatDateAndTime(event.activity.testTypes.testTypeStartTimestamp, "time")} - ${this.formatDateAndTime(event.activity.testTypes.testTypeEndTimestamp, "time")}
-      ^• Test description: ${event.activity.testTypes.testTypeName}
+      ^• Time: ${this.formatDateAndTime((event.activity.testTypes[0]).testTypeStartTimestamp, "time")} - ${this.formatDateAndTime((event.activity.testTypes[0]).testTypeEndTimestamp, "time")}
+      ^• Test description: ${event.activity.testTypes[0].testTypeName}
       ^• Axles / Seats: ${axlesSeats}
-      ^• Result: ${this.capitalise(event.activity.testTypes.testResult)}` +
-          `${event.activity.testTypes.certificateNumber ? `\n^• Certificate number: ${event.activity.testTypes.certificateNumber}` : ""}` +
-          `${event.activity.testTypes.testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime(event.activity.testTypes.testExpiryDate, "date")}` : ""}` +
+      ^• Result: ${this.capitalise((event.activity.testTypes[0]).testResult)}` +
+          `${(event.activity.testTypes[0]).certificateNumber ? `\n^• Certificate number: ${(event.activity.testTypes[0]).certificateNumber}` : ""}` +
+          `${(event.activity.testTypes[0]).testExpiryDate ? `\n^• Expiry date: ${this.formatDateAndTime((event.activity.testTypes[0]).testExpiryDate, "date")}` : ""}` +
           `${index < activitiesList.length - 1 ? `\n---\n` : "\n"}`; // Add divider line if all BUT last entry
       }
       if (event.activityType === ACTIVITY_TYPE.TIME_NOT_TESTING) {

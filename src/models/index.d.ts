@@ -1,10 +1,3 @@
-declare enum StationType {
-  ATF = "atf",
-  GVTS = "gvts",
-  HQ = "hq",
-  POTF = "potf",
-}
-
 interface IS3Config {
   endpoint: string;
   s3ForcePathStyle: boolean;
@@ -31,43 +24,6 @@ interface IMOTConfig {
     vtg5a: "VTG5A.pdf";
   };
   templateId: string;
-}
-
-interface IActivity {
-  id: string;
-  activityType: "visit" | "wait";
-  testStationName: string;
-  testStationPNumber: string;
-  testStationEmail: string;
-  testStationType: StationType;
-  testerName: string;
-  testerStaffId: string;
-  startTime: string;
-  endTime: string;
-  waitReason: [string];
-  notes: string;
-}
-
-interface ITestType {
-  testTypeStartTimestamp: string;
-  testTypeName: string;
-  testResult: string;
-  certificateNumber: string;
-  testExpiryDate: number;
-  testTypeEndTimeStamp: string;
-}
-
-interface ITestResults {
-  testerStaffId: string;
-  vrm: string;
-  testStationPNumber: string;
-  preparerId: string;
-  numberOfSeats: number;
-  testStartTimestamp: string;
-  testEndTimestamp: string;
-  testTypes: ITestType;
-  vin: string;
-  vehicleType: string;
 }
 
 interface IInvokeConfig {
@@ -102,4 +58,4 @@ interface IConfig {
   invoke: IIndexInvokeConfig;
 }
 
-export { IS3Config, IActivity, IInvokeConfig, IMOTConfig, ITestResults, IActivitiesList, ISecretConfig, IConfig };
+export { IS3Config, IInvokeConfig, IMOTConfig, IActivitiesList, ISecretConfig, IConfig };

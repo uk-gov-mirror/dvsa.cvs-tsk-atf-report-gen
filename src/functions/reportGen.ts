@@ -8,6 +8,7 @@ import { LambdaService } from "../services/LambdaService";
 import { ReportGenerationService } from "../services/ReportGenerationService";
 import { SendATFReport } from "../services/SendATFReport";
 import { TestResultsService } from "../services/TestResultsService";
+import { ActivitySchema } from "@dvsa/cvs-type-definitions/types/v1/activity";
 
 /**
  * λ function to process a SQS of test results into a queue for certificate generation.
@@ -28,7 +29,7 @@ const reportGen: Handler = async (event: any, context?: Context, callback?: Call
   try {
     for (const record of event.Records) {
       const recordBody = JSON.parse(record?.body);
-      const visit: any = unmarshall(recordBody?.dynamodb.NewImage);
+      const visit: ActivitySchema = unmarshall(recordBody?.dynamodb.NewImage) as ActivitySchema;
 
       console.debug(`visit is: ${JSON.stringify(visit.id)}`);
 
