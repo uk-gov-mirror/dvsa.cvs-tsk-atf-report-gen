@@ -25,6 +25,9 @@ const reportGen: Handler = async (event: any, context?: Context, callback?: Call
   const reportService: ReportGenerationService = new ReportGenerationService(new TestResultsService(lambdaService), new ActivitiesService(lambdaService));
   const sendATFReport: SendATFReport = new SendATFReport();
 
+  console.log('This is the event:');
+  console.log(JSON.stringify(event))
+
   console.debug("Services injected, looping over sqs events");
   try {
     for (const record of event.Records) {
