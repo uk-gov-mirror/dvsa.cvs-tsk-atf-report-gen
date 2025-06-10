@@ -7,7 +7,8 @@ import { ActivityType } from "@dvsa/cvs-type-definitions/types/v1/enums/activity
 import { ActivitySchema } from "@dvsa/cvs-type-definitions/types/v1/activity";
 import { TestStationTypes } from "@dvsa/cvs-type-definitions/types/v1/enums/testStationType.enum";
 import { TestStatus } from "@dvsa/cvs-type-definitions/types/v1/enums/testStatus.enum";
-import { TestResultSchema, TestTypeSchema } from "@dvsa/cvs-type-definitions/types/v1/test-result";
+import { TestResultSchema } from "@dvsa/cvs-type-definitions/types/v1/test-result";
+import { TestResultTestTypeSchema } from "@dvsa/cvs-type-definitions/types/v1/test-result-test-type";
 
 describe("sendATFReport", () => {
   mockConfig();
@@ -89,7 +90,7 @@ describe("sendATFReport", () => {
               ],
               name: "Annual test",
               testResult: "pass",
-            }] as TestTypeSchema[],
+            }] as TestResultTestTypeSchema[],
             vin: "XMGDE02FS0H012345",
             vehicleType: "psv",
             testerEmailAddress: "teststationname@dvsa.gov.uk",
